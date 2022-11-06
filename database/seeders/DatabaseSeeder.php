@@ -41,5 +41,77 @@ class DatabaseSeeder extends Seeder
                 'key' => 'USER'
             ]
         );
+
+        DB::table('gender')->insert([
+            ['name' => 'FEMENINO'],
+            ['name' => 'MASCULINO']
+        ]);
+
+        DB::table('stratum')->insert([
+            ['number' => 1],
+            ['number' => 2],
+            ['number' => 3],
+            ['number' => 4],
+            ['number' => 5],
+            ['number' => 6]
+        ]);
+
+        DB::table('modality')->insert([
+            ['name' => 'DISTANCIA'],
+            ['name' => 'PRESENCIAL'],
+            ['name' => 'VIRTUAL']
+        ]);
+
+        DB::table('acceptance_type')->insert([
+            ['name' => 'DEPORT'],
+            ['name' => 'INDIGENA'],
+            ['name' => 'LEY1084B'],
+            ['name' => 'NEGRITUD'],
+            ['name' => 'POR-EXAMEN']
+        ]);
+
+        DB::table('registration_type')->insert([
+            ['name' => 'DEPORT'],
+            ['name' => 'INDIGENA'],
+            ['name' => 'LEY1084B'],
+            ['name' => 'NEGRITUD'],
+            ['name' => 'POR-EXAMEN'],
+            ['name' => 'NORMAL']
+        ]);
+
+        DB::table('semester')->insert([
+            ['name' => 20151],
+            ['name' => 20152],
+            ['name' => 20161],
+            ['name' => 20162],
+            ['name' => 20171],
+            ['name' => 20172],
+            ['name' => 20181],
+            ['name' => 20182],
+            ['name' => 20191],
+            ['name' => 20192],
+            ['name' => 20201],
+            ['name' => 20202],
+            ['name' => 20211],
+            ['name' => 20212],
+            ['name' => 20221],
+            ['name' => 20222],
+            ['name' => 20231],
+            ['name' => 20232],
+            ['name' => 20241],
+            ['name' => 20242],
+            ['name' => 20251],
+            ['name' => 20252],
+            ['name' => 20261],
+            ['name' => 20262],
+            ['name' => 20271],
+            ['name' => 20272],
+            ['name' => 20281],
+            ['name' => 20282],
+            ['name' => 20291],
+            ['name' => 20292],
+            ['name' => 20301],
+            ['name' => 20302]
+        ]);
     }
 }
