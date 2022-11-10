@@ -21,8 +21,8 @@ class CreatePresentationTable extends Migration
             $table->unsignedInteger('id_registration_type');
             $table->unsignedInteger('id_semester');
             //$table->integer('id_presentation_place'); pendiente de que Augusto pregunte
-            $table->unsignedInteger('id_acceptance_type');
-            $table->unsignedInteger('id_accepted_program');
+            $table->unsignedInteger('id_acceptance_type')->nullable();
+            $table->unsignedInteger('id_accepted_program')->nullable();
             $table->integer('credential');
             $table->dateTime('registration_date');
             $table->boolean('admitted');
