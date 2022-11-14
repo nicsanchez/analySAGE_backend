@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
     Author: David Nicolás Sánchez Sendoya, Augusto Enrique Salazar
 
 */
+
 Route::post('login', 'App\Http\Controllers\AuthenticateController@authenticate');
 
 Route::group(['middleware' => ['jwt.verify']], function() {
@@ -25,6 +26,15 @@ Route::group(['middleware' => ['jwt.verify']], function() {
         });
         Route::group(['prefix' => 'roles'],function (){
             Route::post('getAllRoles','App\Http\Controllers\Roles\RolesController@getAllRoles');
+        });
+        Route::group(['prefix' => 'inscribed'],function (){
+            Route::post('storeInscribedBySemester','App\Http\Controllers\Inscribed\InscribedController@storeInscribedBySemester');
+        });
+        Route::group(['prefix' => 'questions'],function (){
+            Route::post('storeQuestions','App\Http\Controllers\Questions\QuestionsController@storeQuestions');
+        });
+        Route::group(['prefix' => 'answers'],function (){
+            Route::post('storeAnswers','App\Http\Controllers\Answers\AnswersController@storeAnswers');
         });
     });
 
