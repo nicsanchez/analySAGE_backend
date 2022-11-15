@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Logs;
 
+use App\BL\Logs\LogsBL;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\BL\Logs\LogsBL;
 
 class LogsController extends Controller
 {
-    public function getLogs(Request $request){
+    public function getLogs(Request $request)
+    {
         return LogsBL::getLogs($request->input());
     }
 }

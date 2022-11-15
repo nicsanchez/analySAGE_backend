@@ -6,7 +6,8 @@ use DB;
 
 class AcceptanceTypeAO
 {
-    public static function findAcceptanceTypeId($acceptanceType){
+    public static function findAcceptanceTypeId($acceptanceType)
+    {
         return DB::table('acceptance_type')
             ->select('id')
             ->where('name', $acceptanceType)

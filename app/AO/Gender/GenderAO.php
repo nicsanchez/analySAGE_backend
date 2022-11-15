@@ -6,7 +6,8 @@ use DB;
 
 class GenderAO
 {
-    public static function findGenderId($gender){
+    public static function findGenderId($gender)
+    {
         return DB::table('gender')
             ->select('id')
             ->where('name', $gender)

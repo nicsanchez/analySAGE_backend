@@ -6,7 +6,8 @@ use DB;
 
 class AnswersAO
 {
-    public static function storeAnswers($data){
+    public static function storeAnswers($data)
+    {
         DB::table('answers')->insert($data);
     }
 
