@@ -17,11 +17,12 @@ class AnswersBulkImport implements ToCollection
      * @param Collection $collection
      */
     public static $errors = [];
+    public static $firstTime = false;
+    public static $rightQuestionsBySemester = null;
 
     public function collection($rows)
     {
         $cont = 0;
-        $firstTime = false;
         $storeAnswersRequests = new StoreAnswers();
         foreach ($rows as $row) {
             $cont += 1;
@@ -38,49 +39,63 @@ class AnswersBulkImport implements ToCollection
                     self::$errors[] = ['row' => $cont, 'error' => $validator->errors()->all()];
                 } else {
                     $semesterId = SemesterAO::findSemesterId($data['semester'])->id;
-                    if (!$firstTime) {
-                        $rightQuestionsBySemester = QuestionsAO::getRightQuestions($semesterId);
-                        $firstTime = true;
-                    }
+                    $this->getRightQuestions(self::$firstTime, $semesterId);
                     $presentation = PresentationAO::findByCredentialSemester($semesterId, $data['credential']);
-                    if (AnswersAO::issetCredentialInSemester($semesterId, $data['credential'])) {
-                        AnswersAO::deleteAnswer($semesterId, $data['credential']);
-                    }
-                    $daySession = $presentation->day_session;
-                    $rightQuestions = $rightQuestionsBySemester->filter(function ($item) use ($daySession) {
-                        return $item->day_session == $daySession;
-                    });
-
+                    $this->deleteAnswerIfExists($semesterId, $data);
+                    $rightQuestions = $this->getRightQuestionBySession($presentation);
                     $arrayOfAnswers = $this->getArrayOfAnswers($data['marked_answers']);
-
-                    foreach ($rightQuestions as $rightQuestion) {
-                        $i = $rightQuestion->number - 1;
-                        $dataAnswers = [
-                            'id_presentation' => $presentation->id,
-                            'id_question' => $rightQuestion->id,
-                            'selected_answer' => $arrayOfAnswers[$i],
-                        ];
-                        if ($arrayOfAnswers[$i] !== $rightQuestion->right_answer || $arrayOfAnswers[$i] === ' ') {
-                            $dataAnswers['right_answer'] = false;
-                        } else {
-                            $dataAnswers['right_answer'] = true;
-                        }
-                        $dataAnswers['created_at'] = date('Y-m-d H:i:s');
-                        $dataAnswers['updated_at'] = date('Y-m-d H:i:s');
-                        AnswersAO::storeAnswers($dataAnswers);
-                    }
+                    $this->storeAnswers($rightQuestions, $arrayOfAnswers, $presentation);
                 }
             }
         }
     }
 
+    public function storeAnswers($rightQuestions, $arrayOfAnswers, $presentation)
+    {
+        foreach ($rightQuestions as $rightQuestion) {
+            $i = $rightQuestion->number - 1;
+            $dataAnswers = [
+                'id_presentation' => $presentation->id,
+                'id_question' => $rightQuestion->id,
+                'selected_answer' => $arrayOfAnswers[$i],
+            ];
+            if ($arrayOfAnswers[$i] !== $rightQuestion->right_answer || $arrayOfAnswers[$i] === ' ') {
+                $dataAnswers['right_answer'] = false;
+            } else {
+                $dataAnswers['right_answer'] = true;
+            }
+            $dataAnswers['created_at'] = date('Y-m-d H:i:s');
+            $dataAnswers['updated_at'] = date('Y-m-d H:i:s');
+            AnswersAO::storeAnswers($dataAnswers);
+        }
+    }
+
+    public function getRightQuestionBySession($presentation)
+    {
+        $daySession = $presentation->day_session;
+        return self::$rightQuestionsBySemester->filter(function ($item) use ($daySession) {
+            return $item->day_session == $daySession;
+        });
+    }
+
+    public function getRightQuestions($firstTime, $semesterId)
+    {
+        if (!self::$firstTime) {
+            self::$firstTime = true;
+            self::$rightQuestionsBySemester = QuestionsAO::getRightQuestions($semesterId);
+        }
+    }
+
+    public function deleteAnswerIfExists($semesterId, $data)
+    {
+        if (AnswersAO::issetCredentialInSemester($semesterId, $data['credential'])) {
+            AnswersAO::deleteAnswer($semesterId, $data['credential']);
+        }
+    }
+
     public function getArrayOfAnswers($stringOfAnswers)
     {
-        $arrayOfAnswers = [];
-        for ($i = 0; $i < strlen($stringOfAnswers); $i++) {
-            $arrayOfAnswers[] = $stringOfAnswers[$i];
-        }
-        return $arrayOfAnswers;
+        return str_split($stringOfAnswers);
     }
 
 }
