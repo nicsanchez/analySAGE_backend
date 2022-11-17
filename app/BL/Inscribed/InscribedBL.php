@@ -20,8 +20,8 @@ class InscribedBL
             $response['status'] = 200;
             LogsBL::saveLog('Inscritos', 'Se ha almacenado la información de inscritos en el servidor.');
         } catch (\Throwable $th) {
-            $response['msg'] = "No fue posible almanecar la información de inscritos en el servidor.";
-            Log::error('No fue posible almanecar la información de inscritos en el servidor | E: ' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            $response['msg'] = "No fue posible almacenar la información de inscritos en el servidor.";
+            Log::error('No fue posible almacenar la información de inscritos en el servidor | E: ' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
         return $response;
     }
