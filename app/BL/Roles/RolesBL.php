@@ -21,7 +21,8 @@ class RolesBL
             $response['status'] = 200;
         } catch (\Throwable $th) {
             $response['msg'] = "No fue posible obtenerse los roles.";
-            Log::error('Error al obtener roles: ' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            Log::error('Error al obtener roles: ' . $th->getMessage() .
+                ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
         return $response;
     }
@@ -35,7 +36,8 @@ class RolesBL
             $response['status'] = 200;
         } catch (\Throwable $th) {
             $response['msg'] = "No fue posible obtenerse los roles.";
-            Log::error('Error al obtener roles: ' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            Log::error('Error al obtener roles: ' . $th->getMessage() .
+                ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
         return $response;
     }

@@ -21,7 +21,8 @@ class AnswersBL
             LogsBL::saveLog('Respuestas', 'Se ha almacenado la información de respuestas.');
         } catch (\Throwable $th) {
             $response['msg'] = "No fue posible almacenar la información de respuestas.";
-            Log::error('No fue posible almacenar la información de respuestas | E: ' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            Log::error('No fue posible almacenar la información de respuestas | E: ' .
+                $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
         return $response;
     }

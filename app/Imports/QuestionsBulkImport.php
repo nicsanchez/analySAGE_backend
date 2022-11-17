@@ -22,7 +22,7 @@ class QuestionsBulkImport implements ToCollection
         $storeQuestionsRequests = new StoreQuestions();
         foreach ($rows as $row) {
             $cont += 1;
-            if ($row->filter()->isNotEmpty() and $cont != 1) {
+            if ($row->filter()->isNotEmpty() && $cont != 1) {
                 $data = [
                     'id_semester' => $row[0],
                     'day_session' => $row[1],

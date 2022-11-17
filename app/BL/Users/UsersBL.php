@@ -22,7 +22,8 @@ class UsersBL
             $response['status'] = 200;
         } catch (\Throwable $th) {
             $response['msg'] = "No fue posible obtenerse los usuarios.";
-            Log::error('Error al obtener usuarios: ' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            Log::error('Error al obtener usuarios: ' . $th->getMessage() .
+                ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
 
         return $response;
@@ -38,7 +39,8 @@ class UsersBL
             $response['status'] = 200;
         } catch (\Throwable $th) {
             $response['msg'] = "No fue posible crearse el usuario.";
-            Log::error('Error al crear el usuario: ' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            Log::error('Error al crear el usuario: ' . $th->getMessage() .
+                ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
 
         return $response;
@@ -53,7 +55,8 @@ class UsersBL
             $response['status'] = 200;
         } catch (\Throwable $th) {
             $response['msg'] = "No fue posible eliminarse el usuario.";
-            Log::error('Error al eliminar el usuario: ' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            Log::error('Error al eliminar el usuario: ' . $th->getMessage() .
+                ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
 
         return $response;
@@ -80,7 +83,8 @@ class UsersBL
             $response['status'] = 200;
         } catch (\Throwable $th) {
             $response['msg'] = "No fue posible actualizarse el usuario.";
-            Log::error('Error al actualizarse el usuario: ' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            Log::error('Error al actualizarse el usuario: ' . $th->getMessage() .
+                ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
 
         return $response;
@@ -107,7 +111,8 @@ class UsersBL
             $response['status'] = 200;
         } catch (\Throwable $th) {
             $response['msg'] = "No fue posible actualizarse el usuario en sesión.";
-            Log::error('Error al actualizarse el usuario en sesión: ' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            Log::error('Error al actualizarse el usuario en sesión: ' .
+                $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
 
         return $response;
@@ -122,7 +127,8 @@ class UsersBL
             $response['status'] = 200;
         } catch (\Throwable $th) {
             $response['msg'] = "No fue posible obtenerse el usuario.";
-            Log::error('Error al obtenerse el usuario: ' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            Log::error('Error al obtenerse el usuario: ' . $th->getMessage() .
+                ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
         return $response;
     }

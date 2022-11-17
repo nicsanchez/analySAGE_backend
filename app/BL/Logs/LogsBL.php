@@ -26,7 +26,8 @@ class LogsBL
             ];
             LogsAO::saveLog($data);
         } catch (\Throwable $th) {
-            Log::error('Error al almacenarse Log | E: ' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            Log::error('Error al almacenarse Log | E: ' . $th->getMessage() .
+                ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
     }
 
@@ -39,7 +40,8 @@ class LogsBL
             $response['status'] = 200;
         } catch (\Throwable $th) {
             $response['msg'] = "No fue posible obtenerse los registros de actividad almacenados en el servidor.";
-            Log::error('No fue posible obtenerse los registros de actividad almacenados en el servidor | E: ' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            Log::error('No fue posible obtenerse los registros de actividad almacenados en el servidor | E: ' .
+                $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
         return $response;
     }

@@ -16,7 +16,9 @@ class UsersAO
     {
         $result = DB::table('users as u')
             ->join('roles as r', 'r.id', '=', 'u.rol')
-            ->select('u.id', 'u.name', 'u.lastname', 'u.email', 'u.document', 'u.username', 'r.name as rolname', 'u.rol');
+            ->select('u.id', 'u.name', 'u.lastname',
+                'u.email', 'u.document', 'u.username',
+                'r.name as rolname', 'u.rol');
         if ($search !== '' && $search !== null) {
             $result = $result->where('document', 'LIKE', $search . '%')->paginate($itemsPerPage);
         } else {
@@ -54,7 +56,10 @@ class UsersAO
     /* Método usado para obtener información no sensible de un usuario de base de datos*/
     public static function getUser($id)
     {
-        return DB::table('users')->select('id', 'name', 'lastname', 'email', 'document', 'username', 'rol')->where('id', $id)->get();
+        return DB::table('users')
+            ->select('id', 'name', 'lastname', 'email', 'document', 'username', 'rol')
+            ->where('id', $id)
+            ->get();
     }
 
 }

@@ -26,7 +26,7 @@ class StoreAnswers extends FormRequest
         return [
             'credential' => 'required|integer',
             'semester' => 'required|integer',
-            'marked_answers' => 'required|string'
+            'marked_answers' => 'required|string',
         ];
     }
 
@@ -38,7 +38,7 @@ class StoreAnswers extends FormRequest
             'marked_answers.required' => 'Las Respuestas Marcadas son obligatorias',
             'credential.integer' => 'La Credencial debe ser de tipo entero',
             'semester.integer' => 'El Semestre debe ser de tipo entero',
-            'marked_answers.string' => 'Las Respuestas Marcadas debe ser de tipo texto'
+            'marked_answers.string' => 'Las Respuestas Marcadas debe ser de tipo texto',
         ];
     }
 

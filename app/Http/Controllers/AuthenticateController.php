@@ -42,7 +42,8 @@ class AuthenticateController extends Controller
             JWTAuth::invalidate(JWTAuth::getToken());
             $response['status'] = 200;
         } catch (\Throwable $th) {
-            Log::error('No fue posible cerrar sesión y destruir token M:' . $th->getMessage() . ' | L:' . $th->getLine() . ' F:' . $th->getFile());
+            Log::error('No fue posible cerrar sesión y destruir token M:' .
+                $th->getMessage() . ' | L:' . $th->getLine() . ' F:' . $th->getFile());
         }
         return $response;
 

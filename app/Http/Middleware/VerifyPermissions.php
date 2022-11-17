@@ -1,16 +1,16 @@
 <?php
 
 /*
-    Capa Middleware relacionado con la verificación de permisos de un usuario en sesión
-    Author: David Nicolás Sánchez Sendoya, Augusto Enrique Salazar
-*/
+Capa Middleware relacionado con la verificación de permisos de un usuario en sesión
+Author: David Nicolás Sánchez Sendoya, Augusto Enrique Salazar
+ */
 
 namespace App\Http\Middleware;
 
-use Closure;
-use JWTAuth;
-use Illuminate\Http\Request;
 use App\AO\Roles\RolesAO;
+use Closure;
+use Illuminate\Http\Request;
+use JWTAuth;
 
 class VerifyPermissions
 {
@@ -23,10 +23,14 @@ class VerifyPermissions
      */
     public function handle(Request $request, Closure $next)
     {
-        if(RolesAO::getPermissions(JWTAuth::user()->rol)[0]->key == 'ADMIN'){
+        if (RolesAO::getPermissions(JWTAuth::user()->rol)[0]->key == 'ADMIN') {
             return $next($request);
-        }else{
-            return response()->json(['status' => 903, 'data' => 'No tiene permisos suficientes para realizar la acción solicitada.']);
+        } else {
+            return response()->json(
+                [
+                    'status' => 903,
+                    'data' => 'No tiene permisos suficientes para realizar la acción solicitada.',
+                ]);
         }
     }
 }
