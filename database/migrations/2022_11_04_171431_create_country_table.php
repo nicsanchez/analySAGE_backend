@@ -17,6 +17,7 @@ class CreateCountryTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('id_continent', false);
             $table->string('name', 100);
+            $table->integer('consecutive');
             $table->timestamps();
             $table->foreign('id_continent')->references('id')->on('continent');
         });

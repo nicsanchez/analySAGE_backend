@@ -17,6 +17,7 @@ class CreateStateTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('id_country');
             $table->string('name', 100);
+            $table->integer('consecutive');
             $table->timestamps();
             $table->foreign('id_country')->references('id')->on('country');
         });

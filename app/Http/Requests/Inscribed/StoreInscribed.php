@@ -29,6 +29,12 @@ class StoreInscribed extends FormRequest
             'id_gender' => 'required|string',
             'id_birth_municipality' => 'required|integer',
             'id_residence_municipality' => 'required|integer',
+            'id_birth_continent' => 'required|integer',
+            'id_birth_country' => 'required|integer',
+            'id_birth_state' => 'required|integer',
+            'id_residence_continent' => 'required|integer',
+            'id_residence_country' => 'required|integer',
+            'id_residence_state' => 'required|integer',
             'id_stratum' => 'required|integer',
             'id_school' => 'required|integer',
             'year_of_degree' => 'required|integer',
@@ -43,7 +49,7 @@ class StoreInscribed extends FormRequest
             //'' => '', // pendiente de augusto que pregunte
             'admitted' => 'nullable|string',
             'id_acceptance_type' => 'nullable|string',
-            'id_accepted_program' => 'nullable|integer'
+            'id_accepted_program' => 'nullable|integer',
         ];
     }
 
@@ -55,6 +61,12 @@ class StoreInscribed extends FormRequest
             'id_gender.required' => 'El Sexo es obligatorio',
             'id_birth_municipality.required' => 'El Id Municipio de Nacimiento es obligatorio',
             'id_residence_municipality.required' => 'El Id Municipio de Residencia es obligatorio',
+            'id_birth_continent.required' => 'El Id Continente de Nacimiento es obligatorio',
+            'id_birth_country.required' => 'El Id País de Nacimiento es obligatorio',
+            'id_birth_state.required' => 'El Id Departamento de Nacimiento es obligatorio',
+            'id_residence_continent.required' => 'El Id Continente de Residencia es obligatorio',
+            'id_residence_country.required' => 'El Id País de Residencia es obligatorio',
+            'id_residence_state.required' => 'El Id Departamento de Residencia es obligatorio',
             'id_stratum.required' => 'El Estrato es obligatorio',
             'id_school.required' => 'El Id de Colegio es obligatorio',
             'year_of_degree.required' => 'El Año de titulación es obligatorio',
@@ -72,6 +84,12 @@ class StoreInscribed extends FormRequest
             'id_birth_municipality.integer' => 'El Id Municipio de Nacimiento debe ser de tipo entero',
             'identification.integer' => 'La identificación debe ser de tipo entero',
             'id_residence_municipality.integer' => 'El Id Municipio de Residencia debe ser de tipo entero',
+            'id_birth_continent.integer' => 'El Id Continente de Nacimiento debe ser de tipo entero',
+            'id_birth_country.integer' => 'El Id País de Nacimiento debe ser de tipo entero',
+            'id_birth_state.integer' => 'El Id Departamento de Nacimiento debe ser de tipo entero',
+            'id_residence_continent.integer' => 'El Id Continente de Residencia debe ser de tipo entero',
+            'id_residence_country.integer' => 'El Id País de Residencia debe ser de tipo entero',
+            'id_residence_state.integer' => 'El Id Departamento de Residencia debe ser de tipo entero',
             'id_stratum.integer' => 'El Estrato debe ser de tipo entero',
             'id_school.integer' => 'El Id de Colegio debe ser de tipo entero',
             'year_of_degree.integer' => 'El Año de titulación debe ser de tipo entero',
@@ -86,7 +104,7 @@ class StoreInscribed extends FormRequest
             //'' => 'La Sede de presentación debe ser de tipo texto', // pendiente de augusto que pregunte
             'admitted.string' => 'Admitido debe ser de tipo texto',
             'id_acceptance_type.string' => 'Tipo de Aceptación debe ser de tipo texto',
-            'id_accepted_program.integer' => 'Id Programa Admitido debe ser de tipo entero'
+            'id_accepted_program.integer' => 'Id Programa Admitido debe ser de tipo entero',
 
         ];
     }

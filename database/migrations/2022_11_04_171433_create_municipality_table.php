@@ -17,6 +17,7 @@ class CreateMunicipalityTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('id_state');
             $table->string('name', 100);
+            $table->integer('consecutive');
             $table->timestamps();
             $table->foreign('id_state')->references('id')->on('state');
         });
