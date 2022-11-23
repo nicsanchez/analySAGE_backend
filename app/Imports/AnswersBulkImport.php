@@ -10,6 +10,7 @@ use App\Http\Requests\Answers\StoreAnswers;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use App\AO\BulkHistory\BulkHistoryAO;
 
 class AnswersBulkImport implements ToCollection
 {
@@ -17,36 +18,62 @@ class AnswersBulkImport implements ToCollection
      * @param Collection $collection
      */
     public static $errors = [];
+    public static $semester = null;
     public static $firstTime = false;
     public static $rightQuestionsBySemester = null;
+
+    public function __construct($semester)
+    {
+        if (SemesterAO::findSemesterId($semester)) {
+            self::$semester = SemesterAO::findSemesterId($semester)->id;
+        }
+    }
 
     public function collection($rows)
     {
         $cont = 0;
         $storeAnswersRequests = new StoreAnswers();
-        foreach ($rows as $row) {
-            $cont += 1;
-            if ($row->filter()->isNotEmpty() && $cont != 1) {
-                $data = [
-                    'credential' => $row[0],
-                    'semester' => $row[1],
-                    'marked_answers' => $row[2],
-                ];
-                $validator = Validator::make($data,
-                    $storeAnswersRequests->rules(),
-                    $storeAnswersRequests->messages());
-                if ($validator->fails()) {
-                    self::$errors[] = ['row' => $cont, 'error' => $validator->errors()->all()];
-                } else {
-                    $semesterId = SemesterAO::findSemesterId($data['semester'])->id;
-                    $this->getRightQuestions(self::$firstTime, $semesterId);
-                    $presentation = PresentationAO::findByCredentialSemester($semesterId, $data['credential']);
-                    $this->deleteAnswerIfExists($semesterId, $data);
-                    $rightQuestions = $this->getRightQuestionBySession($presentation);
-                    $arrayOfAnswers = $this->getArrayOfAnswers($data['marked_answers']);
-                    $this->storeAnswers($rightQuestions, $arrayOfAnswers, $presentation);
+        if (BulkHistoryAO::existInscribedHistory(self::$semester) && self::$semester) {
+            if (BulkHistoryAO::existQuestionHistory(self::$semester)) {
+                foreach ($rows as $row) {
+                    $cont += 1;
+                    if ($row->filter()->isNotEmpty() && $cont != 1) {
+                        $data = [
+                            'credential' => $row[0],
+                            'semester' => $row[1],
+                            'marked_answers' => $row[2],
+                        ];
+                        $validator = Validator::make(
+                            $data,
+                            $storeAnswersRequests->rules(),
+                            $storeAnswersRequests->messages());
+                        if ($validator->fails()) {
+                            self::$errors[] = ['row' => $cont, 'error' => $validator->errors()->all()];
+                        } else {
+                            $this->getRightQuestions(self::$firstTime, self::$semester);
+                            $presentation = PresentationAO::findByCredentialSemester(
+                                self::$semester,
+                                $data['credential']
+                            );
+                            $this->deleteAnswerIfExists(self::$semester, $data);
+                            $rightQuestions = $this->getRightQuestionBySession($presentation);
+                            $arrayOfAnswers = $this->getArrayOfAnswers($data['marked_answers']);
+                            $this->storeAnswers($rightQuestions, $arrayOfAnswers, $presentation);
+                        }
+                    }
                 }
+                $this->storeLogFromAnswersBulk();
+            } else {
+                self::$errors[] = [
+                    'row' => '-',
+                    'error' => ['No se ha realizado un cargue de ruta de respuestas previamente.']
+                ];
             }
+        } else {
+            self::$errors[] = [
+                'row' => '-',
+                'error' => ['No se ha realizado un cargue de inscritos previamente.']
+            ];
         }
     }
 
@@ -98,4 +125,13 @@ class AnswersBulkImport implements ToCollection
         return str_split($stringOfAnswers);
     }
 
+    public function storeLogFromAnswersBulk()
+    {
+        $now = date('Y-m-d H:i:s');
+        $data = [
+            'answers' => 1,
+            'updated_at' => $now,
+        ];
+        BulkHistoryAO::updateHistory(self::$semester, $data);
+    }
 }

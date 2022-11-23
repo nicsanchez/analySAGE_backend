@@ -10,6 +10,6 @@ class AnswersController extends Controller
 {
     public function storeAnswers(ValidateBulkAnswers $request)
     {
-        return AnswersBL::storeAnswers($request->file);
+        return AnswersBL::storeAnswers($request);
     }
 }

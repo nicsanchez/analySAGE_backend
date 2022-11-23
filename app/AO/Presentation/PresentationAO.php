@@ -19,4 +19,14 @@ class PresentationAO
             ->where('credential', $credential)
             ->first();
     }
+
+    public static function semesterHaveMoreThanOnePresentations($semester)
+    {
+        $presentations = DB::table('presentation')
+            ->select('id')
+            ->where('id_semester', $semester)
+            ->get();
+
+        return ($presentations->count() > 0);
+    }
 }

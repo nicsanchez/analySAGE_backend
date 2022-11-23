@@ -10,12 +10,12 @@ use Maatwebsite\Excel\Facades\Excel;
 class QuestionsBL
 {
 
-    public static function storeQuestions($file)
+    public static function storeQuestions($request)
     {
         $response['status'] = 400;
         try {
-            $questionsList = new QuestionsBulkImport;
-            Excel::import($questionsList, $file);
+            $questionsList = new QuestionsBulkImport($request->semester);
+            Excel::import($questionsList, $request->file);
             $response['errors'] = $questionsList::$errors;
             $response['status'] = 200;
             LogsBL::saveLog('Preguntas', 'Se ha almacenado la información de las preguntas.');

@@ -13,6 +13,7 @@ use App\Http\Requests\Inscribed\StoreInscribed;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use App\AO\BulkHistory\BulkHistoryAO;
 use \PhpOffice\PhpSpreadsheet\Shared as Shared;
 
 class InscribedBulkImport implements ToCollection
@@ -20,7 +21,13 @@ class InscribedBulkImport implements ToCollection
     /**
      * @param Collection $collection
      */
+    public static $semester = null;
     public static $errors = [];
+
+    public function __construct($semester)
+    {
+        $this->insertNewSemesterIfNotExists($semester);
+    }
 
     public function collection($rows)
     {
@@ -51,6 +58,7 @@ class InscribedBulkImport implements ToCollection
                 }
             }
         }
+        $this->storeLogFromInscribedBulk();
     }
 
     public function processPersonalInformationIds($dataPersonalInformation)
@@ -133,7 +141,7 @@ class InscribedBulkImport implements ToCollection
             'id_first_option_program' => $row[16],
             'id_second_option_program' => $row[17],
             'id_registration_type' => $row[18],
-            'id_semester' => $row[19],
+            'id_semester' => self::$semester,
             'version' => $row[20],
             'day_session' => $row[21],
             //'' => $row[22], // pendiente de augusto que pregunte
@@ -157,21 +165,34 @@ class InscribedBulkImport implements ToCollection
             $dataPresentation['id_acceptance_type'] = AcceptanceTypeAO::findAcceptanceTypeId(
                 $dataPresentation['id_acceptance_type'])[0]->id;
         }
-        $dataPresentation = $this->insertNewSemesterIfNotExists($dataPresentation);
         $dataPresentation['admitted'] = $dataPresentation['admitted'] === 'ADMITIDO' ? true : false;
         return $dataPresentation;
     }
 
-    public function insertNewSemesterIfNotExists($dataPresentation)
+    public function insertNewSemesterIfNotExists($semester)
     {
-        $semester = SemesterAO::findSemesterId($dataPresentation['id_semester']);
-        if ($semester) {
-            $dataPresentation['id_semester'] = $semester->id;
+        $objSemester = SemesterAO::findSemesterId($semester);
+        if ($objSemester) {
+            self::$semester = $objSemester->id;
         } else {
-            $dataPresentation['id_semester'] = SemesterAO::insertNewSemester(
-                ['name' => $dataPresentation['id_semester']]
+            self::$semester = SemesterAO::insertNewSemester(
+                ['name' => $semester]
             );
         }
-        return $dataPresentation;
+    }
+
+    public function storeLogFromInscribedBulk()
+    {
+        if (PresentationAO::semesterHaveMoreThanOnePresentations(self::$semester) &&
+         !BulkHistoryAO::existHistory(self::$semester)) {
+            $now = date('Y-m-d H:i:s');
+            $data = [
+                'id_semester' => self::$semester,
+                'inscribed' => 1,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+            BulkHistoryAO::insertHistory($data);
+        }
     }
 }

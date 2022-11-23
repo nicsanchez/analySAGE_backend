@@ -18,4 +18,27 @@ class QuestionsAO
             ->orderBy('number', 'ASC')
             ->get();
     }
+
+    public static function semesterHaveMoreThanOneQuestion($semester)
+    {
+        $questions = DB::table('questions')
+            ->select('id')
+            ->where('id_semester', $semester)
+            ->get();
+
+        return ($questions->count() > 0);
+    }
+
+    public static function semesterHaveQuestions($semester)
+    {
+        $questions = DB::table('questions')
+            ->where('id_semester', $semester)
+            ->get();
+        return ($questions->count() > 0);
+    }
+
+    public static function deleteQuestionsInSemester($semester)
+    {
+        DB::table('questions')->where('id_semester', $semester)->delete();
+    }
 }

@@ -10,6 +10,6 @@ class InscribedController extends Controller
 {
     public function storeInscribedBySemester(ValidateBulkFile $request)
     {
-        return InscribedBL::storeInscribedBySemester($request->file);
+        return InscribedBL::storeInscribedBySemester($request);
     }
 }
