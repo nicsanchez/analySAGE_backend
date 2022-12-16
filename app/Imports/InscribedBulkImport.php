@@ -3,17 +3,18 @@
 namespace App\Imports;
 
 use App\AO\AcceptanceType\AcceptanceTypeAO;
+use App\AO\BulkHistory\BulkHistoryAO;
 use App\AO\Gender\GenderAO;
 use App\AO\Municipality\MunicipalityAO;
 use App\AO\PersonalInformation\PersonalInformationAO;
 use App\AO\Presentation\PresentationAO;
 use App\AO\RegistrationType\RegistrationTypeAO;
+use App\AO\School\SchoolAO;
 use App\AO\Semester\SemesterAO;
 use App\Http\Requests\Inscribed\StoreInscribed;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\ToCollection;
-use App\AO\BulkHistory\BulkHistoryAO;
 use \PhpOffice\PhpSpreadsheet\Shared as Shared;
 
 class InscribedBulkImport implements ToCollection
@@ -78,7 +79,43 @@ class InscribedBulkImport implements ToCollection
             $dataPersonalInformation['id_residence_municipality']
         )[0]->id;
 
+        $dataPersonalInformation['id_school'] = $this->storeOrUpdateSchool($dataPersonalInformation);
+        $dataPersonalInformatio['id_first_option_program'] = $this->storeOrUpdateProgram(
+            $dataPersonalInformation['id_first_option_program'],
+            $dataPersonalInformation['first_option_program_name']);
+        $dataPersonalInformatio['id_second_option_program'] = $this->storeOrUpdateProgram(
+            $dataPersonalInformation['id_second_option_program'],
+            $dataPersonalInformation['second_option_program_name']);
+        $dataPersonalInformatio['id_accepted_program'] = $this->storeOrUpdateProgram(
+            $dataPersonalInformation['id_accepted_program'],
+            $dataPersonalInformation['accepted_program_name']);
+
         return $dataPersonalInformation;
+    }
+
+    public function storeOrUpdateProgram($dataPersonalInformation)
+    {
+
+    }
+
+    public function storeOrUpdateSchool($dataPersonalInformation)
+    {
+        $municipalityId = MunicipalityAO::findMunicipalityId(1, 46, $dataPersonalInformation['id_state_school'],
+            $dataPersonalInformation['id_municipality_school']);
+        $schoolId = SchoolAO::validateSchoolExistance($dataPersonalInformatio['id_school'],
+            $dataPersonalInformation['school_name'], $municipalityId);
+        $dataSchool = [
+            'id_municipality' => $municipalityId,
+            'consecutive' => $dataPersonalInformatio['id_school'],
+            'name' => $dataPersonalInformation['school_name'],
+            'naturalness' => $dataPersonalInformation['naturalness'],
+        ];
+        if ($schoolId) {
+            SchoolAO::updateSchool($schoolId, $dataSchool);
+        } else {
+            $schoolId = SchoolAO::storeSchool($dataSchool);
+        }
+        return $schoolId;
     }
 
     public function storePresentation($dataPresentation)
@@ -111,6 +148,10 @@ class InscribedBulkImport implements ToCollection
         unset($dataPersonalInformation['id_residence_continent']);
         unset($dataPersonalInformation['id_residence_country']);
         unset($dataPersonalInformation['id_residence_state']);
+        unset($dataPersonalInformation['school_name']);
+        unset($dataPersonalInformation['id_state_school']);
+        unset($dataPersonalInformation['id_municipality_school']);
+        unset($dataPersonalInformation['naturalness']);
         return $dataPersonalInformation;
     }
 
@@ -132,6 +173,12 @@ class InscribedBulkImport implements ToCollection
             'id_residence_municipality' => $row[10],
             'id_stratum' => $row[11],
             'id_school' => $row[12], //Con columnas $row[12] $row[13] $row[15] $row[16] se obtiene colegio y se pone id aca
+
+            'school_name' => $row[13],
+            'id_state_school' => $row[14],
+            'id_municipality_school' => $row[15],
+            'naturalness' => $row[16],
+
             'year_of_degree' => $row[17],
         ];
 
@@ -139,7 +186,13 @@ class InscribedBulkImport implements ToCollection
             'registration_date' => Shared\Date::excelToDateTimeObject($row[18])->format('Y-m-d H:i:s'),
             'credential' => $row[19],
             'id_first_option_program' => $row[20], // con las columnas $row[20] y $row[21] se saca programa primera opcion y se pone id
+
+            'first_option_program_name' => $row[21],
+
             'id_second_option_program' => $row[22], // con las columnas $row[22] y $row[23] se saca programa segunda opcion y se pone id
+
+            'second_option_program_name' => $row[23],
+
             'id_registration_type' => $row[24],
             'id_semester' => self::$semester,
             'version' => $row[25],
@@ -148,6 +201,8 @@ class InscribedBulkImport implements ToCollection
             'admitted' => $row[28],
             'id_acceptance_type' => $row[29],
             'id_accepted_program' => $row[30], // con las columnas $row[30] y $row[31] se saca programa admitido y se pone id
+
+            'accepted_program_name' => $row[31],
         ];
 
         $data['validation'] = Validator::make(
@@ -184,7 +239,7 @@ class InscribedBulkImport implements ToCollection
     public function storeLogFromInscribedBulk()
     {
         if (PresentationAO::semesterHaveMoreThanOnePresentations(self::$semester) &&
-         !BulkHistoryAO::existHistory(self::$semester)) {
+            !BulkHistoryAO::existHistory(self::$semester)) {
             $now = date('Y-m-d H:i:s');
             $data = [
                 'id_semester' => self::$semester,

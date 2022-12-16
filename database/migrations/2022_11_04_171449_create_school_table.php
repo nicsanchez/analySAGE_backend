@@ -17,6 +17,7 @@ class CreateSchoolTable extends Migration
             $table->increments('id');
             $table->string('name', 256);
             $table->unsignedInteger('id_municipality');
+            $table->unsignedInteger('consecutive');
             $table->string('naturalness', 20);
             $table->timestamps();
             $table->foreign('id_municipality')->references('id')->on('municipality');

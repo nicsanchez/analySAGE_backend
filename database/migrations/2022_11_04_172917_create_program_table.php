@@ -18,6 +18,7 @@ class CreateProgramTable extends Migration
             $table->unsignedInteger('id_headquaters');
             $table->unsignedInteger('id_modality');
             $table->unsignedInteger('id_faculty');
+            $table->unsignedInteger('consecutive');
             $table->string('name', 256);
             $table->timestamps();
             $table->foreign('id_headquaters')->references('id')->on('headquarters');
