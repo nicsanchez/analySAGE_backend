@@ -28,4 +28,24 @@ class MunicipalityAO
 
     }
 
+    public static function getMunicipalityByCodeAndStateId($code, $stateId)
+    {
+        $municipality = DB::table('municipality')
+                ->select('id')
+                ->where('consecutive', $code)
+                ->where('id_state', $stateId)
+                ->first();
+        return $municipality ? $municipality->id : null;
+    }
+
+    public static function storeMunicipality($data)
+    {
+        DB::table('municipality')->insert($data);
+    }
+
+    public static function updateMunicipality($data, $idMunicipality)
+    {
+        DB::table('municipality')->where('id', $idMunicipality)->update($data);
+    }
+
 }

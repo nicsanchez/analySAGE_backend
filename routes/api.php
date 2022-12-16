@@ -35,6 +35,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::group(['prefix' => 'answers'], function () {
             Route::post('storeAnswers', 'App\Http\Controllers\Answers\AnswersController@storeAnswers');
         });
+        Route::group(['prefix' => 'municipality'], function () {
+            Route::post('storeMunicipalities', 'App\Http\Controllers\Municipality\MunicipalityController@storeMunicipalities');
+        });
     });
 
     Route::group(['prefix' => 'users'], function () {

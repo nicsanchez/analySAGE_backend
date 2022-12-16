@@ -131,23 +131,23 @@ class InscribedBulkImport implements ToCollection
             'id_residence_state' => $row[9],
             'id_residence_municipality' => $row[10],
             'id_stratum' => $row[11],
-            'id_school' => $row[12],
-            'year_of_degree' => $row[13],
+            'id_school' => $row[12], //Con columnas $row[12] $row[13] $row[15] $row[16] se obtiene colegio y se pone id aca
+            'year_of_degree' => $row[17],
         ];
 
         $data['dataPresentation'] = [
-            'registration_date' => Shared\Date::excelToDateTimeObject($row[14])->format('Y-m-d H:i:s'),
-            'credential' => $row[15],
-            'id_first_option_program' => $row[16],
-            'id_second_option_program' => $row[17],
-            'id_registration_type' => $row[18],
+            'registration_date' => Shared\Date::excelToDateTimeObject($row[18])->format('Y-m-d H:i:s'),
+            'credential' => $row[19],
+            'id_first_option_program' => $row[20], // con las columnas $row[20] y $row[21] se saca programa primera opcion y se pone id
+            'id_second_option_program' => $row[22], // con las columnas $row[22] y $row[23] se saca programa segunda opcion y se pone id
+            'id_registration_type' => $row[24],
             'id_semester' => self::$semester,
-            'version' => $row[20],
-            'day_session' => $row[21],
-            //'' => $row[22], // pendiente de augusto que pregunte
-            'admitted' => $row[23],
-            'id_acceptance_type' => $row[24],
-            'id_accepted_program' => $row[25],
+            'version' => $row[25],
+            'day_session' => $row[26],
+            //'' => $row[27], // pendiente de augusto que pregunte
+            'admitted' => $row[28],
+            'id_acceptance_type' => $row[29],
+            'id_accepted_program' => $row[30], // con las columnas $row[30] y $row[31] se saca programa admitido y se pone id
         ];
 
         $data['validation'] = Validator::make(
