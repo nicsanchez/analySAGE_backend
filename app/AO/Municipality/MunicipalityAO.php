@@ -48,4 +48,25 @@ class MunicipalityAO
         DB::table('municipality')->where('id', $idMunicipality)->update($data);
     }
 
+    public static function getMunicipalityIdToColombiansMunicipality($state, $municipality)
+    {
+        $municipality = DB::table('continent as CON')
+            ->select('M.id')
+            ->join('country as COU', function ($join) {
+                $join->on('CON.id', '=', 'COU.id_continent')
+                    ->where('COU.name', 'COLOMBIA');
+            })
+            ->join('state as S', function ($join) use ($state) {
+                $join->on('COU.id', '=', 'S.id_country')
+                    ->where('S.consecutive', $state);
+            })
+            ->join('municipality as M', function ($join) use ($municipality) {
+                $join->on('S.id', '=', 'M.id_state')
+                    ->where('M.consecutive', $municipality);
+            })
+            ->where('CON.name', 'AMERICA')
+            ->first();
+
+        return $municipality ? $municipality->id : null;
+    }
 }

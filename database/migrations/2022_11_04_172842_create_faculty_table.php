@@ -15,6 +15,7 @@ class CreateFacultyTable extends Migration
     {
         Schema::create('faculty', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('consecutive');
             $table->string('name', 256);
             $table->timestamps();
         });

@@ -27,7 +27,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             Route::post('getAllRoles', 'App\Http\Controllers\Roles\RolesController@getAllRoles');
         });
         Route::group(['prefix' => 'inscribed'], function () {
-            Route::post('storeInscribedBySemester', 'App\Http\Controllers\Inscribed\InscribedController@storeInscribedBySemester');
+            Route::post(
+                'storeInscribedBySemester',
+                'App\Http\Controllers\Inscribed\InscribedController@storeInscribedBySemester'
+            );
         });
         Route::group(['prefix' => 'questions'], function () {
             Route::post('storeQuestions', 'App\Http\Controllers\Questions\QuestionsController@storeQuestions');
@@ -36,7 +39,22 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             Route::post('storeAnswers', 'App\Http\Controllers\Answers\AnswersController@storeAnswers');
         });
         Route::group(['prefix' => 'municipality'], function () {
-            Route::post('storeMunicipalities', 'App\Http\Controllers\Municipality\MunicipalityController@storeMunicipalities');
+            Route::post(
+                'storeMunicipalities',
+                'App\Http\Controllers\Municipality\MunicipalityController@storeMunicipalities'
+            );
+        });
+        Route::group(['prefix' => 'school'], function () {
+            Route::post(
+                'storeSchools',
+                'App\Http\Controllers\School\SchoolController@storeSchools'
+            );
+        });
+        Route::group(['prefix' => 'program'], function () {
+            Route::post(
+                'storePrograms',
+                'App\Http\Controllers\Program\ProgramController@storePrograms'
+            );
         });
     });
 
