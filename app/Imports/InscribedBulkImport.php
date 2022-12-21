@@ -33,58 +33,80 @@ class InscribedBulkImport implements ToCollection
 
     public function collection($rows)
     {
-        $cont = 0;
-        foreach ($rows as $row) {
-            $cont += 1;
-            if ($row->filter()->isNotEmpty() && $cont != 1) {
-                $validationData = $this->validateRow($row);
-                $validator = $validationData['validation'];
-                $dataPersonalInformation = $validationData['dataPersonalInformation'];
-                $dataPresentation = $validationData['dataPresentation'];
-                if ($validator->fails()) {
-                    self::$errors[] = ['row' => $cont, 'error' => $validator->errors()->all()];
-                } else {
-                    $dataPersonalInformation = $this->processPersonalInformationIds($dataPersonalInformation, $cont);
-                    if ($dataPersonalInformation === 'Not found') {
-                        continue;
-                    }
-                    $dataPresentation = $this->processPresentationIds($dataPresentation, $cont);
-                    if ($dataPresentation === 'Not found') {
-                        continue;
-                    }
-                    $personalInfo = PersonalInformationAO::getPersonalDataByDocument(
-                        $dataPersonalInformation['identification']);
-
-                    if ($personalInfo->count() !== 0) {
-                        $this->updatePersonalInformation($dataPersonalInformation, $personalInfo);
-                        $dataPresentation['id_personal_information'] = $personalInfo[0]->id;
+        try {
+            $cont = 0;
+            foreach ($rows as $row) {
+                $cont += 1;
+                if ($row->filter()->isNotEmpty() && $cont != 1) {
+                    $validationData = $this->validateRow($row);
+                    $validator = $validationData['validation'];
+                    $dataPersonalInformation = $validationData['dataPersonalInformation'];
+                    $dataPresentation = $validationData['dataPresentation'];
+                    if ($validator->fails()) {
+                        self::$errors[] = ['row' => $cont, 'error' => $validator->errors()->all()];
                     } else {
-                        $dataPresentation['id_personal_information'] = $this->storePersonalInformation(
-                            $dataPersonalInformation);
+                        $dataPersonalInformation = $this->processPersonalInformationIds($dataPersonalInformation, $cont);
+                        if ($dataPersonalInformation === 'Not found') {
+                            continue;
+                        }
+                        $dataPresentation = $this->processPresentationIds($dataPresentation, $cont);
+                        if ($dataPresentation === 'Not found') {
+                            continue;
+                        }
+                        $personalInfo = PersonalInformationAO::getPersonalDataByDocument(
+                            $dataPersonalInformation['identification']);
+
+                        if ($personalInfo->count() !== 0) {
+                            $this->updatePersonalInformation($dataPersonalInformation, $personalInfo);
+                            $dataPresentation['id_personal_information'] = $personalInfo[0]->id;
+                        } else {
+                            $dataPresentation['id_personal_information'] = $this->storePersonalInformation(
+                                $dataPersonalInformation);
+                        }
+                        $this->storePresentation($dataPresentation);
                     }
-                    $this->storePresentation($dataPresentation);
                 }
             }
+            $this->storeLogFromInscribedBulk();
+        } catch (\Throwable $th) {
+            Log::error('No fue posible almacenar la información de inscritos en el servidor | E: ' .
+                $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile()) . " linea del problema: " . $cont;
         }
-        $this->storeLogFromInscribedBulk();
+
     }
 
     public function processPersonalInformationIds($dataPersonalInformation, $cont)
     {
         $dataPersonalInformation['id_gender'] = GenderAO::findGenderId(
             $dataPersonalInformation['id_gender'])[0]->id;
-        $dataPersonalInformation['id_birth_municipality'] = MunicipalityAO::findMunicipalityId(
+        $municipalityIdBirth = MunicipalityAO::findMunicipalityId(
             $dataPersonalInformation['id_birth_continent'],
             $dataPersonalInformation['id_birth_country'],
             $dataPersonalInformation['id_birth_state'],
             $dataPersonalInformation['id_birth_municipality']
-        )[0]->id;
-        $dataPersonalInformation['id_residence_municipality'] = MunicipalityAO::findMunicipalityId(
+        );
+
+        $dataPersonalInformation = $this->findMunicipalityIdOrReturnError($municipalityIdBirth,
+            $data, $cont, 'id_birth_municipality');
+
+        if ($dataPersonalInformation == 'Not found') {
+            return 'Not found';
+        }
+
+        $municipalityIdResidence = MunicipalityAO::findMunicipalityId(
             $dataPersonalInformation['id_residence_continent'],
             $dataPersonalInformation['id_residence_country'],
             $dataPersonalInformation['id_residence_state'],
             $dataPersonalInformation['id_residence_municipality']
-        )[0]->id;
+        );
+
+        $dataPersonalInformation = $this->findMunicipalityIdOrReturnError($municipalityIdResidence,
+            $data, $cont, 'id_residence_municipality');
+
+        if ($dataPersonalInformation == 'Not found') {
+            return 'Not found';
+        }
+
         $schoolId = SchoolAO::getSchoolByCode($dataPersonalInformation['id_school']);
         if (!$schoolId) {
             self::$errors[] = ['row' => $cont, 'error' => 'El colegio con Id ' . $dataPersonalInformation['id_school'] .
@@ -95,6 +117,18 @@ class InscribedBulkImport implements ToCollection
         }
 
         return $dataPersonalInformation;
+    }
+
+    public function findMunicipalityIdOrReturnError($municipalityId, $data, $field, $cont)
+    {
+        if ($municipalityId) {
+            $data[$field] = $municipalityId;
+        } else {
+            $data = 'Not found';
+            self::$errors[] = ['row' => $cont, 'error' => 'El municipio con Id ' . $data[$field] .
+                "no está registrado en el sistema."];
+        }
+        return $data;
     }
 
     public function storePresentation($dataPresentation)
@@ -181,7 +215,7 @@ class InscribedBulkImport implements ToCollection
             $dataPresentation['id_acceptance_type'] = AcceptanceTypeAO::findAcceptanceTypeId(
                 $dataPresentation['id_acceptance_type'])[0]->id;
         }
-        $dataPresentation['admitted'] = $dataPresentation['admitted'] === 'ADMITIDO' ? true : false;
+        $dataPresentation['admitted'] = $dataPresentation['admitted'] == '' ? false : true;
         if ($dataPresentation['id_second_option_program']) {
             $dataPresentation = $this->findProgramId($dataPresentation, 'id_second_option_program', $cont);
         }

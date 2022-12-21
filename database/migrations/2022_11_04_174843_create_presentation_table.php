@@ -26,8 +26,8 @@ class CreatePresentationTable extends Migration
             $table->integer('credential');
             $table->dateTime('registration_date');
             $table->boolean('admitted');
-            $table->integer('version');
-            $table->integer('day_session');
+            $table->integer('version')->nullable();
+            $table->integer('day_session')->nullable();
             $table->timestamps();
             $table->foreign('id_personal_information')->references('id')->on('personal_information');
             $table->foreign('id_first_option_program')->references('id')->on('program');

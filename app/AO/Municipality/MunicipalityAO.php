@@ -9,7 +9,7 @@ class MunicipalityAO
     public static function findMunicipalityId($continent, $country, $state, $municipality)
     {
 
-        return DB::table('continent as CON')
+        $municipality = DB::table('continent as CON')
             ->select('M.id')
             ->join('country as COU', function ($join) use ($country) {
                 $join->on('CON.id', '=', 'COU.id_continent')
@@ -24,17 +24,17 @@ class MunicipalityAO
                     ->where('M.consecutive', $municipality);
             })
             ->where('CON.consecutive', $continent)
-            ->get();
-
+            ->first();
+        return $municipality ? $municipality->id : null;
     }
 
     public static function getMunicipalityByCodeAndStateId($code, $stateId)
     {
         $municipality = DB::table('municipality')
-                ->select('id')
-                ->where('consecutive', $code)
-                ->where('id_state', $stateId)
-                ->first();
+            ->select('id')
+            ->where('consecutive', $code)
+            ->where('id_state', $stateId)
+            ->first();
         return $municipality ? $municipality->id : null;
     }
 
