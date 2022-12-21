@@ -17,7 +17,7 @@ class CreatePresentationTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('id_personal_information');
             $table->unsignedInteger('id_first_option_program');
-            $table->unsignedInteger('id_second_option_program');
+            $table->unsignedInteger('id_second_option_program')->nullable();
             $table->unsignedInteger('id_registration_type');
             $table->unsignedInteger('id_semester');
             //$table->integer('id_presentation_place'); pendiente de que Augusto pregunte

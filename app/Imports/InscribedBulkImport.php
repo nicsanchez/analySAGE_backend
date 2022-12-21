@@ -182,16 +182,19 @@ class InscribedBulkImport implements ToCollection
                 $dataPresentation['id_acceptance_type'])[0]->id;
         }
         $dataPresentation['admitted'] = $dataPresentation['admitted'] === 'ADMITIDO' ? true : false;
-        if ($dataPresentation['admitted']) {
+        if ($dataPresentation['id_second_option_program']) {
             $dataPresentation = $this->findProgramId($dataPresentation, 'id_second_option_program', $cont);
+        }
+        if ($dataPresentation['id_first_option_program']) {
             if ($dataPresentation !== 'Not found') {
                 $dataPresentation = $this->findProgramId($dataPresentation, 'id_first_option_program', $cont);
             }
+        }
+        if ($dataPresentation['id_accepted_program']) {
             if ($dataPresentation !== 'Not found') {
                 $dataPresentation = $this->findProgramId($dataPresentation, 'id_accepted_program', $cont);
             }
         }
-
         return $dataPresentation;
     }
 
