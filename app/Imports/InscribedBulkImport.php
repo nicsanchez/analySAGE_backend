@@ -8,7 +8,9 @@ use App\AO\Gender\GenderAO;
 use App\AO\Municipality\MunicipalityAO;
 use App\AO\PersonalInformation\PersonalInformationAO;
 use App\AO\Presentation\PresentationAO;
+use App\AO\Program\ProgramAO;
 use App\AO\RegistrationType\RegistrationTypeAO;
+use App\AO\School\SchoolAO;
 use App\AO\Semester\SemesterAO;
 use App\Http\Requests\Inscribed\StoreInscribed;
 use Illuminate\Support\Collection;
@@ -42,8 +44,14 @@ class InscribedBulkImport implements ToCollection
                 if ($validator->fails()) {
                     self::$errors[] = ['row' => $cont, 'error' => $validator->errors()->all()];
                 } else {
-                    $dataPersonalInformation = $this->processPersonalInformationIds($dataPersonalInformation);
-                    $dataPresentation = $this->processPresentationIds($dataPresentation);
+                    $dataPersonalInformation = $this->processPersonalInformationIds($dataPersonalInformation, $cont);
+                    if ($dataPersonalInformation === 'Not found') {
+                        continue;
+                    }
+                    $dataPresentation = $this->processPresentationIds($dataPresentation, $cont);
+                    if ($dataPresentation === 'Not found') {
+                        continue;
+                    }
                     $personalInfo = PersonalInformationAO::getPersonalDataByDocument(
                         $dataPersonalInformation['identification']);
 
@@ -61,7 +69,7 @@ class InscribedBulkImport implements ToCollection
         $this->storeLogFromInscribedBulk();
     }
 
-    public function processPersonalInformationIds($dataPersonalInformation)
+    public function processPersonalInformationIds($dataPersonalInformation, $cont)
     {
         $dataPersonalInformation['id_gender'] = GenderAO::findGenderId(
             $dataPersonalInformation['id_gender'])[0]->id;
@@ -77,6 +85,14 @@ class InscribedBulkImport implements ToCollection
             $dataPersonalInformation['id_residence_state'],
             $dataPersonalInformation['id_residence_municipality']
         )[0]->id;
+        $schoolId = SchoolAO::getSchoolByCode($dataPersonalInformation['id_school']);
+        if (!$schoolId) {
+            self::$errors[] = ['row' => $cont, 'error' => 'El colegio con Id ' . $dataPersonalInformation['id_school'] .
+                "no está registrado en el sistema."];
+            $dataPersonalInformation = 'Not found';
+        } else {
+            $dataPersonalInformation['id_school'] = $schoolId;
+        }
 
         return $dataPersonalInformation;
     }
@@ -157,7 +173,7 @@ class InscribedBulkImport implements ToCollection
         return $data;
     }
 
-    public function processPresentationIds($dataPresentation)
+    public function processPresentationIds($dataPresentation, $cont)
     {
         $dataPresentation['id_registration_type'] = RegistrationTypeAO::findRegistrationTypeId(
             $dataPresentation['id_registration_type'])[0]->id;
@@ -166,7 +182,30 @@ class InscribedBulkImport implements ToCollection
                 $dataPresentation['id_acceptance_type'])[0]->id;
         }
         $dataPresentation['admitted'] = $dataPresentation['admitted'] === 'ADMITIDO' ? true : false;
+        if ($dataPresentation['admitted']) {
+            $dataPresentation = $this->findProgramId($dataPresentation, 'id_second_option_program', $cont);
+            if ($dataPresentation !== 'Not found') {
+                $dataPresentation = $this->findProgramId($dataPresentation, 'id_first_option_program', $cont);
+            }
+            if ($dataPresentation !== 'Not found') {
+                $dataPresentation = $this->findProgramId($dataPresentation, 'id_accepted_program', $cont);
+            }
+        }
+
         return $dataPresentation;
+    }
+
+    public function findProgramId($data, $field, $cont)
+    {
+        $idProgram = ProgramAO::getProgramByCode($data[$field]);
+        if (!$idProgram) {
+            self::$errors[] = ['row' => $cont, 'error' => 'El programa con Id ' . $data[$field] .
+                "no está registrado en el sistema."];
+            $data = 'Not found';
+        } else {
+            $data[$field] = $idProgram;
+        }
+        return $data;
     }
 
     public function insertNewSemesterIfNotExists($semester)
