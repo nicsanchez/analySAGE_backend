@@ -34,8 +34,6 @@ class CreatePresentationTable extends Migration
             $table->foreign('id_second_option_program')->references('id')->on('program');
             $table->foreign('id_registration_type')->references('id')->on('registration_type');
             $table->foreign('id_semester')->references('id')->on('semester');
-            $table->foreign('id_acceptance_type')->references('id')->on('acceptance_type');
-            $table->foreign('id_accepted_program')->references('id')->on('program');
         });
     }
 
