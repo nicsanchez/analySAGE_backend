@@ -47,7 +47,7 @@ class SchoolBulk implements ToCollection
 
     public function validateSchoolExistanceAndStoreOrUpdateIt($code, $name, $idMunicipality, $naturalness)
     {
-        $idSchool = SchoolAO::getSchoolByCodeAndMunicipalityId($code, $idMunicipality);
+        $idSchool = SchoolAO::getSchoolByCode($code);
         $data = [
             'name' => $name,
             'consecutive' => $code,
