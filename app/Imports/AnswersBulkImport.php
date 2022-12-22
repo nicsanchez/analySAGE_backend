@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\AO\Answers\AnswersAO;
+use App\AO\BulkHistory\BulkHistoryAO;
 use App\AO\Presentation\PresentationAO;
 use App\AO\Questions\QuestionsAO;
 use App\AO\Semester\SemesterAO;
@@ -10,7 +11,6 @@ use App\Http\Requests\Answers\StoreAnswers;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\ToCollection;
-use App\AO\BulkHistory\BulkHistoryAO;
 
 class AnswersBulkImport implements ToCollection
 {
@@ -40,8 +40,7 @@ class AnswersBulkImport implements ToCollection
                     if ($row->filter()->isNotEmpty() && $cont != 1) {
                         $data = [
                             'credential' => $row[0],
-                            'semester' => $row[1],
-                            'marked_answers' => $row[2],
+                            'marked_answers' => $row[1],
                         ];
                         $validator = Validator::make(
                             $data,
@@ -66,13 +65,13 @@ class AnswersBulkImport implements ToCollection
             } else {
                 self::$errors[] = [
                     'row' => '-',
-                    'error' => ['No se ha realizado un cargue de ruta de respuestas previamente.']
+                    'error' => ['No se ha realizado un cargue de ruta de respuestas previamente.'],
                 ];
             }
         } else {
             self::$errors[] = [
                 'row' => '-',
-                'error' => ['No se ha realizado un cargue de inscritos previamente.']
+                'error' => ['No se ha realizado un cargue de inscritos previamente.'],
             ];
         }
     }

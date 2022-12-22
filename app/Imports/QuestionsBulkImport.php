@@ -2,13 +2,13 @@
 
 namespace App\Imports;
 
+use App\AO\BulkHistory\BulkHistoryAO;
 use App\AO\Questions\QuestionsAO;
 use App\AO\Semester\SemesterAO;
 use App\Http\Requests\Questions\StoreQuestions;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\ToCollection;
-use App\AO\BulkHistory\BulkHistoryAO;
 
 class QuestionsBulkImport implements ToCollection
 {
@@ -35,10 +35,9 @@ class QuestionsBulkImport implements ToCollection
                 $cont += 1;
                 if ($row->filter()->isNotEmpty() && $cont != 1) {
                     $data = [
-                        'id_semester' => $row[0],
-                        'day_session' => $row[1],
-                        'number' => $row[2],
-                        'right_answer' => $row[3],
+                        'day_session' => $row[0],
+                        'number' => $row[1],
+                        'right_answer' => $row[2],
                     ];
                     $validator = Validator::make(
                         $data,
@@ -59,7 +58,7 @@ class QuestionsBulkImport implements ToCollection
         } else {
             self::$errors[] = [
                 'row' => '-',
-                'error' => ['No se ha realizado un cargue de inscritos al semestre ingresado.']
+                'error' => ['No se ha realizado un cargue de inscritos al semestre ingresado.'],
             ];
         }
     }
