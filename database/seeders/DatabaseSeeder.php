@@ -67,7 +67,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'INDIGENA'],
             ['name' => 'LEY1084B'],
             ['name' => 'NEGRITUD'],
-            ['name' => 'POR-EXAMEN']
+            ['name' => 'POR-EXAM']
         ]);
 
         DB::table('registration_type')->insert([
@@ -75,7 +75,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'INDIGENA'],
             ['name' => 'LEY1084B'],
             ['name' => 'NEGRITUD'],
-            ['name' => 'POR-EXAMEN'],
+            ['name' => 'POR-EXAM'],
             ['name' => 'NORMAL']
         ]);
 
