@@ -6,10 +6,18 @@ use DB;
 
 class PresentationAO
 {
-    public static function updatePresentation($dataPresentation, $idPersonalInformation)
+
+    public static function getPresentationBySemesterAndPersonalInfo($semester, $personalInfoId)
+    {
+        return DB::table('presentation')->where('id_personal_information', $personalInfoId)
+            ->where('id_semester', $semester)
+            ->get();
+    }
+
+    public static function updatePresentation($dataPresentation, $id)
     {
         DB::table('presentation')
-            ->where('id_personal_information', $idPersonalInformation)
+            ->where('id', $id)
             ->update($dataPresentation);
     }
 

@@ -24,7 +24,6 @@ class InscribedBulkImport implements ToCollection
      * @param Collection $collection
      */
     public static $semester = null;
-    public static $existingSemester = false;
     public static $errors = [];
 
     public function __construct($semester)
@@ -59,8 +58,12 @@ class InscribedBulkImport implements ToCollection
                     if ($personalInfo->count() !== 0) {
                         $this->updatePersonalInformation($dataPersonalInformation, $personalInfo);
                         $dataPresentation['id_personal_information'] = $personalInfo[0]->id;
-                        if (self::$existingSemester) {
-                            $this->updatePresentation($dataPresentation, $personalInfo[0]->id);
+                        $presentationInf = PresentationAO::getPresentationBySemesterAndPersonalInfo(
+                            self::$semester,
+                            $personalInfo[0]->id
+                        );
+                        if ($presentationInf->count() !== 0) {
+                            $this->updatePresentation($dataPresentation, $presentationInf[0]->id);
                         } else {
                             $this->storePresentation($dataPresentation);
                         }
@@ -167,11 +170,11 @@ class InscribedBulkImport implements ToCollection
         }
     }
 
-    public function updatePresentation($dataPresentation, $idPersonalInformation)
+    public function updatePresentation($dataPresentation, $id)
     {
         try {
             $dataPresentation['updated_at'] = date('Y-m-d H:i:s');
-            PresentationAO::updatePresentation($dataPresentation, $idPersonalInformation);
+            PresentationAO::updatePresentation($dataPresentation, $id);
         } catch (\Throwable $th) {
             dd('updatePresentation E:' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
@@ -314,7 +317,6 @@ class InscribedBulkImport implements ToCollection
             $objSemester = SemesterAO::findSemesterId($semester);
             if ($objSemester) {
                 self::$semester = $objSemester->id;
-                self::$existingSemester = true;
             } else {
                 self::$semester = SemesterAO::insertNewSemester(
                     ['name' => $semester]
