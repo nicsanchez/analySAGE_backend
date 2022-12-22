@@ -20,8 +20,8 @@ class CreateAnswersTable extends Migration
             $table->string('selected_answer', 1);
             $table->boolean('right_answer');
             $table->timestamps();
-            $table->foreign('id_presentation')->references('id')->on('presentation');
-            $table->foreign('id_question')->references('id')->on('questions');
+            //$table->foreign('id_presentation')->references('id')->on('presentation');
+            //$table->foreign('id_question')->references('id')->on('questions');
         });
     }
 

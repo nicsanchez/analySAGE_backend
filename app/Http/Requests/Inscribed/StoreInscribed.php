@@ -25,7 +25,7 @@ class StoreInscribed extends FormRequest
     {
         return [
             'birth_date' => 'required|date_format:Y-m-d',
-            'identification' => 'required|alpha_num',
+            'identification' => 'required|regex:/^[\s\w-]+$/',
             'id_gender' => 'required|string',
             'id_birth_municipality' => 'required|integer',
             'id_residence_municipality' => 'required|integer',
@@ -79,7 +79,7 @@ class StoreInscribed extends FormRequest
             'birth_date.date_format' => 'La Fecha de Nacimiento no cumple con el formato de fecha',
             'id_gender.string' => 'El Sexo debe ser de tipo texto',
             'id_birth_municipality.integer' => 'El Id Municipio de Nacimiento debe ser de tipo entero',
-            'identification.alpha_num' => 'La identificación debe ser de tipo alfanumérico',
+            'identification.regex' => 'La identificación debe ser de tipo alfanumérico',
             'id_residence_municipality.integer' => 'El Id Municipio de Residencia debe ser de tipo entero',
             'id_birth_continent.integer' => 'El Id Continente de Nacimiento debe ser de tipo entero',
             'id_birth_country.integer' => 'El Id País de Nacimiento debe ser de tipo entero',

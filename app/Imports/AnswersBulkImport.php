@@ -11,6 +11,7 @@ use App\Http\Requests\Answers\StoreAnswers;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use Log;
 
 class AnswersBulkImport implements ToCollection
 {
@@ -58,6 +59,7 @@ class AnswersBulkImport implements ToCollection
                             $rightQuestions = $this->getRightQuestionBySession($presentation);
                             $arrayOfAnswers = $this->getArrayOfAnswers($data['marked_answers']);
                             $this->storeAnswers($rightQuestions, $arrayOfAnswers, $presentation);
+                            Log::error($cont);
                         }
                     }
                 }

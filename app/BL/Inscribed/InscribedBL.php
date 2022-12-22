@@ -3,6 +3,7 @@
 namespace App\BL\Inscribed;
 
 use App\BL\Logs\LogsBL;
+use Log;
 use App\Imports\InscribedBulkImport;
 use Maatwebsite\Excel\Facades\Excel;
 

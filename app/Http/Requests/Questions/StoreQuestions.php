@@ -24,7 +24,6 @@ class StoreQuestions extends FormRequest
     public function rules()
     {
         return [
-            'id_semester' => 'required|integer',
             'day_session' => 'required|integer',
             'number' => 'required|integer',
             'right_answer' => 'required|string|max:1'
@@ -34,11 +33,9 @@ class StoreQuestions extends FormRequest
     public function messages()
     {
         return [
-            'id_semester.required' => 'El Semestre es obligatorio',
             'day_session.required' => 'La Jornada es obligatoria',
             'number.required' => 'El Número de pregunta es obligatorio',
             'right_answer.required' => 'La Respuesta correcta es obligatoria',
-            'id_semester.integer' => 'El semestre debe ser de tipo entero',
             'day_session.integer' => 'La Jornada debe ser de tipo entero',
             'number.integer' => 'El Número de pregunta debe ser de tipo entero',
             'right_answer.string' => 'La Respuesta correcta de ser de tipo texto',
