@@ -6,6 +6,13 @@ use DB;
 
 class PresentationAO
 {
+    public static function updatePresentation($dataPresentation, $idPersonalInformation)
+    {
+        DB::table('presentation')
+            ->where('id_personal_information', $idPersonalInformation)
+            ->update($dataPresentation);
+    }
+
     public static function storePresentation($data)
     {
         DB::table('presentation')->insert($data);

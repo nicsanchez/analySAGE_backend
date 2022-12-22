@@ -24,6 +24,7 @@ class InscribedBulkImport implements ToCollection
      * @param Collection $collection
      */
     public static $semester = null;
+    public static $existingSemester = false;
     public static $errors = [];
 
     public function __construct($semester)
@@ -58,11 +59,16 @@ class InscribedBulkImport implements ToCollection
                     if ($personalInfo->count() !== 0) {
                         $this->updatePersonalInformation($dataPersonalInformation, $personalInfo);
                         $dataPresentation['id_personal_information'] = $personalInfo[0]->id;
+                        if (self::$existingSemester) {
+                            $this->updatePresentation($dataPresentation, $personalInfo[0]->id);
+                        } else {
+                            $this->storePresentation($dataPresentation);
+                        }
                     } else {
                         $dataPresentation['id_personal_information'] = $this->storePersonalInformation(
                             $dataPersonalInformation);
+                        $this->storePresentation($dataPresentation);
                     }
-                    $this->storePresentation($dataPresentation);
                 }
             }
         }
@@ -115,8 +121,8 @@ class InscribedBulkImport implements ToCollection
                 self::$errors[] = [
                     'row' => $cont,
                     'error' => [
-                        'El colegio con Id '.$dataPersonalInformation['id_school']." no está registrado en el sistema."
-                    ]
+                        'El colegio con Id ' . $dataPersonalInformation['id_school'] . " no está registrado en el sistema.",
+                    ],
                 ];
                 $dataPersonalInformation = 'Not found';
             } else {
@@ -125,7 +131,7 @@ class InscribedBulkImport implements ToCollection
 
             return $dataPersonalInformation;
         } catch (\Throwable $th) {
-            dd('processPersonalInformationIds E:'.$th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            dd('processPersonalInformationIds E:' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
 
     }
@@ -139,14 +145,14 @@ class InscribedBulkImport implements ToCollection
                 self::$errors[] = [
                     'row' => $cont,
                     'error' => [
-                        'El municipio con Id ' . $data[$field] . " no está registrado en el sistema."
-                    ]
+                        'El municipio con Id ' . $data[$field] . " no está registrado en el sistema.",
+                    ],
                 ];
                 $data = 'Not found';
             }
             return $data;
         } catch (\Throwable $th) {
-            dd('findMunicipalityIdOrReturnError E:'.$th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            dd('findMunicipalityIdOrReturnError E:' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
     }
 
@@ -157,7 +163,17 @@ class InscribedBulkImport implements ToCollection
             $dataPresentation['updated_at'] = date('Y-m-d H:i:s');
             PresentationAO::storePresentation($dataPresentation);
         } catch (\Throwable $th) {
-            dd('storePresentation E:'.$th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            dd('storePresentation E:' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+        }
+    }
+
+    public function updatePresentation($dataPresentation, $idPersonalInformation)
+    {
+        try {
+            $dataPresentation['updated_at'] = date('Y-m-d H:i:s');
+            PresentationAO::updatePresentation($dataPresentation, $idPersonalInformation);
+        } catch (\Throwable $th) {
+            dd('updatePresentation E:' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
     }
 
@@ -169,7 +185,7 @@ class InscribedBulkImport implements ToCollection
             $dataPersonalInformation = $this->unsetNotUsedData($dataPersonalInformation);
             return PersonalInformationAO::storePersonalInformation($dataPersonalInformation);
         } catch (\Throwable $th) {
-            dd('storePersonalInformation E:'.$th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            dd('storePersonalInformation E:' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
     }
 
@@ -180,7 +196,7 @@ class InscribedBulkImport implements ToCollection
             $dataPersonalInformation = $this->unsetNotUsedData($dataPersonalInformation);
             PersonalInformationAO::updatePersonalInformation($personalInfo[0]->id, $dataPersonalInformation);
         } catch (\Throwable $th) {
-            dd('updatePersonalInformation E:'.$th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            dd('updatePersonalInformation E:' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
     }
 
@@ -195,7 +211,7 @@ class InscribedBulkImport implements ToCollection
             unset($dataPersonalInformation['id_residence_state']);
             return $dataPersonalInformation;
         } catch (\Throwable $th) {
-            dd('unsetNotUsedData E:'.$th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            dd('unsetNotUsedData E:' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
     }
 
@@ -228,8 +244,8 @@ class InscribedBulkImport implements ToCollection
                 'id_second_option_program' => $row[17],
                 'id_registration_type' => $row[18],
                 'id_semester' => self::$semester,
-                'version' => $row[19] === "" ? null: $row[19],
-                'day_session' => $row[20] === "" ? null: $row[20],
+                'version' => $row[19] === "" ? null : $row[19],
+                'day_session' => $row[20] === "" ? null : $row[20],
                 //'' => $row[21], // pendiente de augusto que pregunte
                 'admitted' => $row[22],
                 'id_acceptance_type' => $row[23],
@@ -242,7 +258,7 @@ class InscribedBulkImport implements ToCollection
                 $storeInscribedRequests->messages());
             return $data;
         } catch (\Throwable $th) {
-            dd('validateRow E:'.$th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            dd('validateRow E:' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
     }
 
@@ -267,7 +283,7 @@ class InscribedBulkImport implements ToCollection
             }
             return $dataPresentation;
         } catch (\Throwable $th) {
-            dd('processPresentationIds E:'.$th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            dd('processPresentationIds E:' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
     }
 
@@ -279,8 +295,8 @@ class InscribedBulkImport implements ToCollection
                 self::$errors[] = [
                     'row' => $cont,
                     'error' => [
-                        'El programa con Id ' . $data[$field] . " no está registrado en el sistema."
-                    ]
+                        'El programa con Id ' . $data[$field] . " no está registrado en el sistema.",
+                    ],
                 ];
                 $data = 'Not found';
             } else {
@@ -288,7 +304,7 @@ class InscribedBulkImport implements ToCollection
             }
             return $data;
         } catch (\Throwable $th) {
-            dd('findProgramId E:'.$th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            dd('findProgramId E:' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
     }
 
@@ -298,13 +314,14 @@ class InscribedBulkImport implements ToCollection
             $objSemester = SemesterAO::findSemesterId($semester);
             if ($objSemester) {
                 self::$semester = $objSemester->id;
+                self::$existingSemester = true;
             } else {
                 self::$semester = SemesterAO::insertNewSemester(
                     ['name' => $semester]
                 );
             }
         } catch (\Throwable $th) {
-            dd('insertNewSemesterIfNotExists E:'.$th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            dd('insertNewSemesterIfNotExists E:' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
     }
 
@@ -323,7 +340,7 @@ class InscribedBulkImport implements ToCollection
                 BulkHistoryAO::insertHistory($data);
             }
         } catch (\Throwable $th) {
-            dd('storeLogFromInscribedBulk E:'.$th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+            dd('storeLogFromInscribedBulk E:' . $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
     }
 }
