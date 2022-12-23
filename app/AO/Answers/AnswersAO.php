@@ -11,24 +11,16 @@ class AnswersAO
         DB::table('answers')->insert($data);
     }
 
-    public static function issetCredentialInSemester($semesterId, $credential)
+    public static function credentialHaveAnswersInSemester($presentationId)
     {
-        $answer = DB::table('answers as A')
-            ->join('questions as Q', 'A.id_question', 'Q.id')
-            ->join('presentation as P', 'P.id', 'A.id_presentation')
-            ->where('P.credential', $credential)
-            ->where('Q.id_semester', $semesterId)
-            ->get();
-        return ($answer->count() > 0);
+        $answer = DB::table('answers')
+            ->where('id_presentation', $presentationId)
+            ->first();
+        return $answer ? $answer->id : null;
     }
 
-    public static function deleteAnswer($semesterId, $credential)
+    public static function updateAnswers($data, $idAnswers)
     {
-        DB::table('answers as A')
-            ->join('questions as Q', 'A.id_question', 'Q.id')
-            ->join('presentation as P', 'P.id', 'A.id_presentation')
-            ->where('P.credential', $credential)
-            ->where('Q.id_semester', $semesterId)
-            ->delete();
+        DB::table('answers')->where('id', $idAnswers)->update($data);
     }
 }

@@ -20,11 +20,10 @@ class AnswersBulkImport implements ToCollection
      */
     public static $errors = [];
     public static $semester = null;
-    public static $firstTime = false;
-    public static $rightQuestionsBySemester = null;
 
     public function __construct($semester)
     {
+        $this->now = date('Y-m-d H:i:s');
         if (SemesterAO::findSemesterId($semester)) {
             self::$semester = SemesterAO::findSemesterId($semester)->id;
         }
@@ -50,15 +49,11 @@ class AnswersBulkImport implements ToCollection
                         if ($validator->fails()) {
                             self::$errors[] = ['row' => $cont, 'error' => $validator->errors()->all()];
                         } else {
-                            $this->getRightQuestions(self::$firstTime, self::$semester);
-                            $presentation = PresentationAO::findByCredentialSemester(
+                            $presentationId = PresentationAO::findByCredentialSemester(
                                 self::$semester,
                                 $data['credential']
                             );
-                            $this->deleteAnswerIfExists(self::$semester, $data);
-                            $rightQuestions = $this->getRightQuestionBySession($presentation);
-                            $arrayOfAnswers = $this->getArrayOfAnswers($data['marked_answers']);
-                            $this->storeAnswers($rightQuestions, $arrayOfAnswers, $presentation);
+                            $this->updateOrStoreAnswersIfExists($presentationId, $data['marked_answers']);
                             Log::error($cont);
                         }
                     }
@@ -78,53 +73,23 @@ class AnswersBulkImport implements ToCollection
         }
     }
 
-    public function storeAnswers($rightQuestions, $arrayOfAnswers, $presentation)
+    public function updateOrStoreAnswersIfExists($presentationId, $answers)
     {
-        foreach ($rightQuestions as $rightQuestion) {
-            $i = $rightQuestion->number - 1;
-            $dataAnswers = [
-                'id_presentation' => $presentation->id,
-                'id_question' => $rightQuestion->id,
-                'selected_answer' => $arrayOfAnswers[$i],
-            ];
-            if ($arrayOfAnswers[$i] !== $rightQuestion->right_answer || $arrayOfAnswers[$i] === ' ') {
-                $dataAnswers['right_answer'] = false;
-            } else {
-                $dataAnswers['right_answer'] = true;
-            }
-            $dataAnswers['created_at'] = date('Y-m-d H:i:s');
-            $dataAnswers['updated_at'] = date('Y-m-d H:i:s');
-            AnswersAO::storeAnswers($dataAnswers);
+        $idAnswers = AnswersAO::credentialHaveAnswersInSemester($presentationId->id);
+        $data = [
+            'id_presentation' => $presentationId->id,
+            'answers_marked' => $answers,
+            'created_at' => $this->now,
+            'updated_at' => $this->now
+        ];
+        if ($idAnswers) {
+            unset($data['updated_at']);
+            AnswersAO::updateAnswers($data, $idAnswers);
+        } else {
+            AnswersAO::storeAnswers($data);
         }
     }
 
-    public function getRightQuestionBySession($presentation)
-    {
-        $daySession = $presentation->day_session;
-        return self::$rightQuestionsBySemester->filter(function ($item) use ($daySession) {
-            return $item->day_session == $daySession;
-        });
-    }
-
-    public function getRightQuestions($firstTime, $semesterId)
-    {
-        if (!self::$firstTime) {
-            self::$firstTime = true;
-            self::$rightQuestionsBySemester = QuestionsAO::getRightQuestions($semesterId);
-        }
-    }
-
-    public function deleteAnswerIfExists($semesterId, $data)
-    {
-        if (AnswersAO::issetCredentialInSemester($semesterId, $data['credential'])) {
-            AnswersAO::deleteAnswer($semesterId, $data['credential']);
-        }
-    }
-
-    public function getArrayOfAnswers($stringOfAnswers)
-    {
-        return str_split($stringOfAnswers);
-    }
 
     public function storeLogFromAnswersBulk()
     {

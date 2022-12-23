@@ -41,4 +41,18 @@ class QuestionsAO
     {
         DB::table('questions')->where('id_semester', $semester)->delete();
     }
+
+    public static function getQuestionsAmountBySemesterAndSession($semester)
+    {
+        return DB::table('questions')
+            ->select(
+                DB::raw('count(id) as count'),
+                'day_session'
+                )
+            ->where('id_semester', $semester)
+            ->groupBy('day_session')
+            ->get()
+            ->toArray();
+    }
+
 }
