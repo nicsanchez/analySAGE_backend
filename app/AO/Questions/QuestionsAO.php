@@ -55,4 +55,14 @@ class QuestionsAO
             ->toArray();
     }
 
+    public static function getMinJourney($semester)
+    {
+        $journey = DB::table('questions')
+                ->select('id')
+                ->whereRaw('day_session = (select min(`day_session`) from questions)')
+                ->where('id_semester', $semester)
+                ->first();
+        return ($journey ? $journey->id : null);
+    }
+
 }

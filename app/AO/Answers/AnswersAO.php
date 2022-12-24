@@ -19,8 +19,83 @@ class AnswersAO
         return $answer ? $answer->id : null;
     }
 
-    public static function updateAnswers($data, $idAnswers)
+    public static function updateAnswers($data,  $idAnswers)
     {
         DB::table('answers')->where('id', $idAnswers)->update($data);
     }
+
+    public static function getRightAndBadAnswersQuantity($filters, $operator)
+    {
+        $query = DB::table('answers as a')
+            ->join('presentation as p', 'p.id', 'a.id_presentation')
+            ->join('semester as s', 's.id', 'p.id_semester')
+            ->join('personal_information as pi', 'pi.id', 'p.id_personal_information')
+            ->join('stratum as st', 'st.id', 'pi.id_stratum')
+            ->join('gender as g', 'g.id', 'pi.id_gender')
+            ->join('program as prf', 'prf.id', 'p.id_first_option_program')
+            ->leftJoin('program as prs', 'prs.id', 'p.id_second_option_program')
+            ->join('municipality as m', 'm.id', 'pi.id_residence_municipality')
+            ->join('state as sta', 'sta.id', 'm.id_state')
+            ->join('country as co', 'co.id', 'sta.id_country')
+            ->join('continent as c', 'c.id', 'co.id_continent')
+            ->join('school as sc', 'sc.id', 'pi.id_school')
+            ->join('questions as q', function ($join) use ($filters) {
+                $join->on('q.id_semester', '=', 's.id')
+                    ->where('q.day_session', '=', $filters['journey']);
+            })
+            ->select(
+                DB::raw('count(a.id) as count'),
+                'q.number'
+            );
+
+        $query->where('s.id', $filters['semester']);
+        $query->where('p.day_session', $filters['journey']);
+        $query->whereRaw('SUBSTRING(a.answers_marked, q.number, 1) '.$operator.' q.right_answer');
+
+        if ($filters['gender']) {
+            $query->where('g.id', $filters['gender']);
+        }
+
+        if ($filters['stratum']) {
+            $query->where('st.id', $filters['stratum']);
+        }
+
+        if ($filters['firstOptionProgram']) {
+            $query->where('prf.id', $filters['firstOptionProgram']);
+        }
+        if ($filters['secondOptionProgram']) {
+            $query->where('prs.id', $filters['secondOptionProgram']);
+        }
+
+        if ($filters['continent']) {
+            $query->where('c.id', $filters['continent']);
+        }
+
+        if ($filters['country']) {
+            $query->where('co.id', $filters['country']);
+        }
+
+        if ($filters['state']) {
+            $query->where('sta.id', $filters['state']);
+        }
+
+        if ($filters['municipality']) {
+            $query->where('m.id', $filters['municipality']);
+        }
+
+        if ($filters['schoolNaturalness']) {
+            $query->where('sc.naturalness', $filters['schoolNaturalness']);
+        }
+
+        if ($filters['school']) {
+            $query->where('sc.id', $filters['school']);
+        }
+
+        $query->groupBy('q.number');
+        $query->orderBy('q.number', 'ASC');
+
+        return $query->get()->toArray();
+    }
 }
+
+

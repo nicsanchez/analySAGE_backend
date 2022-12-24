@@ -66,4 +66,11 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::group(['prefix' => 'roles'], function () {
         Route::post('getPermissions', 'App\Http\Controllers\Roles\RolesController@getPermissions');
     });
+
+    Route::group(['prefix' => 'statistics'], function () {
+        Route::post(
+            'getRightAndBadAnswersQuantity',
+            'App\Http\Controllers\Answers\AnswersController@getRightAndBadAnswersQuantity'
+        );
+    });
 });
