@@ -41,9 +41,9 @@ class AnswersBL
             if (!$request['journey']) {
                 $request['journey'] = QuestionsAO::getMinJourney($request['semester']);
             }
-
-            $rightQuestionsQuantity = AnswersAO::getRightAndBadAnswersQuantity($request, '=');
-            dd($rightQuestionsQuantity);
+            $response['right'] = AnswersAO::getRightAndBadAnswersQuantity($request, '=');
+            $response['bad'] = AnswersAO::getRightAndBadAnswersQuantity($request, '<>');
+            dd($response);
             $response['status'] = 200;
         } catch (\Throwable $th) {
             $response['msg'] = "No fue obtener datos para el grafo de estadisticas por pregunta.";

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Program;
 
+use Illuminate\Http\Request;
 use App\BL\Program\ProgramBL;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Program\BulkRequest;
@@ -13,8 +14,8 @@ class ProgramController extends Controller
         return ProgramBL::storePrograms($request);
     }
 
-    public function getAllPrograms()
+    public function getProgramsByFaculty(Request $request)
     {
-        return ProgramBL::getAllPrograms();
+        return ProgramBL::getProgramsByFaculty($request->idFaculty);
     }
 }

@@ -112,8 +112,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::group(['prefix' => 'program'], function () {
         Route::post(
-            'getAllPrograms',
-            'App\Http\Controllers\Program\ProgramController@getAllPrograms'
+            'getProgramsByFaculty',
+            'App\Http\Controllers\Program\ProgramController@getProgramsByFaculty'
         );
     });
 
@@ -157,4 +157,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         );
     });
 
+    Route::group(['prefix' => 'faculty'], function () {
+        Route::post(
+            'getAllFaculties',
+            'App\Http\Controllers\Faculty\FacultyController@getAllFaculties'
+        );
+    });
 });

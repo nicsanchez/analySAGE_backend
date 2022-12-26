@@ -24,4 +24,11 @@ class FacultyAO
     {
         DB::table('faculty')->where('id', $idFaculty)->update($data);
     }
+
+    public static function getAllFaculties()
+    {
+        return DB::table('faculty')
+            ->select('id', 'name')
+            ->get();
+    }
 }

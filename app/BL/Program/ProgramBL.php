@@ -28,11 +28,11 @@ class ProgramBL
         return $response;
     }
 
-    public static function getAllPrograms()
+    public static function getProgramsByFaculty($idFaculty)
     {
         $response['status'] = 400;
         try {
-            $response['data'] = ProgramAO::getAllPrograms();
+            $response['data'] = ProgramAO::getProgramsByFaculty($idFaculty);
             $response['status'] = 200;
         } catch (\Throwable $th) {
             $response['msg'] = "No fue posible obtener los programas del sistema.";
