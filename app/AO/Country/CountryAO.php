@@ -25,4 +25,12 @@ class CountryAO
     {
         DB::table('country')->where('id', $idCountry)->update($data);
     }
+
+    public static function getAllCountriesByContinent($idContinent)
+    {
+        return DB::table('country')
+            ->select('id', 'name')
+            ->where('id_continent', $idContinent)
+            ->get();
+    }
 }

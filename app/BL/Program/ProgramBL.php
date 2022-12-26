@@ -4,6 +4,7 @@ namespace App\BL\Program;
 
 use Log;
 use App\BL\Logs\LogsBL;
+use App\AO\Program\ProgramAO;
 use App\Imports\ProgramBulk;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -22,6 +23,20 @@ class ProgramBL
         } catch (\Throwable $th) {
             $response['msg'] = "No fue posible almacenar la información de los programas.";
             Log::error('No fue posible almacenar la información de los programas | E: ' .
+                $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+        }
+        return $response;
+    }
+
+    public static function getAllPrograms()
+    {
+        $response['status'] = 400;
+        try {
+            $response['data'] = ProgramAO::getAllPrograms();
+            $response['status'] = 200;
+        } catch (\Throwable $th) {
+            $response['msg'] = "No fue posible obtener los programas del sistema.";
+            Log::error('No fue posible obtener los programas del sistema. | E: ' .
                 $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
         return $response;

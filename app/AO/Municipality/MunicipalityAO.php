@@ -69,4 +69,12 @@ class MunicipalityAO
 
         return $municipality ? $municipality->id : null;
     }
+
+    public static function getAllMunicipalitiesByState($idState)
+    {
+        return DB::table('municipality')
+            ->select('id', 'name')
+            ->where('id_state', $idState)
+            ->get();
+    }
 }

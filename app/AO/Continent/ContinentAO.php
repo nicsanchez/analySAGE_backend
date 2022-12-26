@@ -24,4 +24,11 @@ class ContinentAO
     {
         DB::table('continent')->where('id', $idContinent)->update($data);
     }
+
+    public static function getAllContinents()
+    {
+        return DB::table('continent')
+            ->select('id', 'name')
+            ->get();
+    }
 }

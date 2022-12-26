@@ -13,4 +13,11 @@ class GenderAO
             ->where('name', $gender)
             ->get();
     }
+
+    public static function getAllGenders()
+    {
+        return DB::table('gender')
+            ->select('id', 'name')
+            ->get();
+    }
 }

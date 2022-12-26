@@ -25,4 +25,12 @@ class StateAO
     {
         return DB::table('state')->where('id', $idState)->update($data);
     }
+
+    public static function getAllStatesByCountry($idCountry)
+    {
+        return DB::table('state')
+            ->select('id', 'name')
+            ->where('id_country', $idCountry)
+            ->get();
+    }
 }

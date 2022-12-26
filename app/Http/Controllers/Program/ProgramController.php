@@ -12,4 +12,9 @@ class ProgramController extends Controller
     {
         return ProgramBL::storePrograms($request);
     }
+
+    public function getAllPrograms()
+    {
+        return ProgramBL::getAllPrograms();
+    }
 }

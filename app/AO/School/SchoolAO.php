@@ -34,4 +34,25 @@ class SchoolAO
     {
         DB::table('school')->where('id', $idSchool)->update($data);
     }
+
+    public static function getAllNaturalness()
+    {
+        return DB::table('school')
+            ->select('naturalness')
+            ->distinct()
+            ->get();
+    }
+
+    public static function getAllSchoolsByNaturalnessAndMunicipality($naturalness, $idMunicipality)
+    {
+        $query = DB::table('school')
+            ->select('id', 'name')
+            ->where('id_municipality', $idMunicipality);
+
+        if ($naturalness) {
+            $query->where('naturalness', $naturalness);
+        }
+
+        return $query->get();
+    }
 }

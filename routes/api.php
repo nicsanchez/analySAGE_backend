@@ -20,36 +20,44 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             Route::post('deleteUser', 'App\Http\Controllers\Users\UsersController@deleteUser');
             Route::post('updateUser', 'App\Http\Controllers\Users\UsersController@updateUser');
         });
+
         Route::group(['prefix' => 'logs'], function () {
             Route::post('getLogs', 'App\Http\Controllers\Logs\LogsController@getLogs');
         });
+
         Route::group(['prefix' => 'roles'], function () {
             Route::post('getAllRoles', 'App\Http\Controllers\Roles\RolesController@getAllRoles');
         });
+
         Route::group(['prefix' => 'inscribed'], function () {
             Route::post(
                 'storeInscribedBySemester',
                 'App\Http\Controllers\Inscribed\InscribedController@storeInscribedBySemester'
             );
         });
+
         Route::group(['prefix' => 'questions'], function () {
             Route::post('storeQuestions', 'App\Http\Controllers\Questions\QuestionsController@storeQuestions');
         });
+
         Route::group(['prefix' => 'answers'], function () {
             Route::post('storeAnswers', 'App\Http\Controllers\Answers\AnswersController@storeAnswers');
         });
+
         Route::group(['prefix' => 'municipality'], function () {
             Route::post(
                 'storeMunicipalities',
                 'App\Http\Controllers\Municipality\MunicipalityController@storeMunicipalities'
             );
         });
+
         Route::group(['prefix' => 'school'], function () {
             Route::post(
                 'storeSchools',
                 'App\Http\Controllers\School\SchoolController@storeSchools'
             );
         });
+
         Route::group(['prefix' => 'program'], function () {
             Route::post(
                 'storePrograms',
@@ -73,4 +81,80 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             'App\Http\Controllers\Answers\AnswersController@getRightAndBadAnswersQuantity'
         );
     });
+
+    Route::group(['prefix' => 'semester'], function () {
+        Route::post(
+            'getAllSemesters',
+            'App\Http\Controllers\Semester\SemesterController@getAllSemesters'
+        );
+    });
+
+    Route::group(['prefix' => 'journey'], function () {
+        Route::post(
+            'getAllJourneys',
+            'App\Http\Controllers\Journey\JourneyController@getAllJourneys'
+        );
+    });
+
+    Route::group(['prefix' => 'stratum'], function () {
+        Route::post(
+            'getAllStratums',
+            'App\Http\Controllers\Stratum\StratumController@getAllStratums'
+        );
+    });
+
+    Route::group(['prefix' => 'gender'], function () {
+        Route::post(
+            'getAllGenders',
+            'App\Http\Controllers\Gender\GenderController@getAllGenders'
+        );
+    });
+
+    Route::group(['prefix' => 'program'], function () {
+        Route::post(
+            'getAllPrograms',
+            'App\Http\Controllers\Program\ProgramController@getAllPrograms'
+        );
+    });
+
+    Route::group(['prefix' => 'continent'], function () {
+        Route::post(
+            'getAllContinents',
+            'App\Http\Controllers\Continent\ContinentController@getAllContinents'
+        );
+    });
+
+    Route::group(['prefix' => 'country'], function () {
+        Route::post(
+            'getAllCountriesByContinent',
+            'App\Http\Controllers\Country\CountryController@getAllCountriesByContinent'
+        );
+    });
+
+    Route::group(['prefix' => 'state'], function () {
+        Route::post(
+            'getAllStatesByCountry',
+            'App\Http\Controllers\State\StateController@getAllStatesByCountry'
+        );
+    });
+
+    Route::group(['prefix' => 'municipality'], function () {
+        Route::post(
+            'getAllMunicipalitiesByState',
+            'App\Http\Controllers\Municipality\MunicipalityController@getAllMunicipalitiesByState'
+        );
+    });
+
+    Route::group(['prefix' => 'school'], function () {
+        Route::post(
+            'getAllNaturalness',
+            'App\Http\Controllers\School\SchoolController@getAllNaturalness'
+        );
+
+        Route::post(
+            'getAllSchoolsByNaturalnessAndMunicipality',
+            'App\Http\Controllers\School\SchoolController@getAllSchoolsByNaturalnessAndMunicipality'
+        );
+    });
+
 });

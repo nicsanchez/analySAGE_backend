@@ -24,4 +24,11 @@ class ProgramAO
     {
         DB::table('program')->where('id', $idProgram)->update($data);
     }
+
+    public static function getAllPrograms()
+    {
+        return DB::table('program')
+            ->select('id', 'name')
+            ->get();
+    }
 }

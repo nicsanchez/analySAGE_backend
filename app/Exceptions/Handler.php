@@ -34,7 +34,7 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function () {
+        $this->reportable(function (MethodNotAllowedHttpException $e) {
             //Nothing to do
         });
     }

@@ -6,6 +6,7 @@ use Log;
 use App\BL\Logs\LogsBL;
 use App\Imports\MunicipalityBulk;
 use Maatwebsite\Excel\Facades\Excel;
+use App\AO\Municipality\MunicipalityAO;
 
 class MunicipalityBL
 {
@@ -22,6 +23,20 @@ class MunicipalityBL
         } catch (\Throwable $th) {
             $response['msg'] = "No fue posible almacenar la información de municipios.";
             Log::error('No fue posible almacenar la información de municipios | E: ' .
+                $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+        }
+        return $response;
+    }
+
+    public static function getAllMunicipalitiesByState($idState)
+    {
+        $response['status'] = 400;
+        try {
+            $response['data'] = MunicipalityAO::getAllMunicipalitiesByState($idState);
+            $response['status'] = 200;
+        } catch (\Throwable $th) {
+            $response['msg'] = "No fue posible obtener los municipios del departamento.";
+            Log::error('No fue posible obtener los los municipios del departamento. | E: ' .
                 $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
         }
         return $response;
