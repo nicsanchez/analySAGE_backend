@@ -18,4 +18,24 @@ class AnswersController extends Controller
     {
         return AnswersBL::getRightAndBadAnswersQuantity($request);
     }
+
+    public function getDetailsAnswerByVersion(Request $request)
+    {
+        return AnswersBL::getDetailsAnswers($request, 'p.version');
+    }
+
+    public function getDetailsAnswerByState(Request $request)
+    {
+        return AnswersBL::getDetailsAnswers($request, 'sta.name');
+    }
+
+    public function getDetailsAnswerByStratum(Request $request)
+    {
+        return AnswersBL::getDetailsAnswers($request, 'st.number');
+    }
+
+    public function getDetailsAnswerByFacultyFirstOption(Request $request)
+    {
+        return AnswersBL::getDetailsAnswers($request, 'ff.name');
+    }
 }

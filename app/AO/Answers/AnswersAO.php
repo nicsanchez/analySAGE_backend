@@ -24,7 +24,7 @@ class AnswersAO
         DB::table('answers')->where('id', $idAnswers)->update($data);
     }
 
-    public static function getRightAndBadAnswersQuantity($filters, $operator)
+    public static function getRightAndBadAnswersQuantity($filters, $operator, $orderBy)
     {
         $query = DB::table('answers as a')
             ->join('presentation as p', 'p.id', 'a.id_presentation')
@@ -47,7 +47,7 @@ class AnswersAO
             })
             ->select(
                 DB::raw('count(a.id) as count'),
-                'q.number'
+                $orderBy.' as parameter'
             );
 
         $query->where('s.id', $filters['semester']);
@@ -102,11 +102,14 @@ class AnswersAO
             $query->where('sc.id', $filters['school']);
         }
 
-        $query->groupBy('q.number');
-        $query->orderBy('q.number', 'ASC');
+        if ($filters['questionNumber']) {
+            $query->where('q.number', $filters['questionNumber']);
+        }
+
+        $query->groupBy($orderBy);
+        $query->orderBy($orderBy, 'ASC');
 
         return $query->get()->toArray();
     }
+
 }
-
-

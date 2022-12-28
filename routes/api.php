@@ -80,6 +80,26 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             'getRightAndBadAnswersQuantity',
             'App\Http\Controllers\Answers\AnswersController@getRightAndBadAnswersQuantity'
         );
+
+        Route::post(
+            'getDetailsAnswerByVersion',
+            'App\Http\Controllers\Answers\AnswersController@getDetailsAnswerByVersion'
+        );
+
+        Route::post(
+            'getDetailsAnswerByState',
+            'App\Http\Controllers\Answers\AnswersController@getDetailsAnswerByState'
+        );
+
+        Route::post(
+            'getDetailsAnswerByStratum',
+            'App\Http\Controllers\Answers\AnswersController@getDetailsAnswerByStratum'
+        );
+
+        Route::post(
+            'getDetailsAnswerByFacultyFirstOption',
+            'App\Http\Controllers\Answers\AnswersController@getDetailsAnswerByFacultyFirstOption'
+        );
     });
 
     Route::group(['prefix' => 'semester'], function () {
