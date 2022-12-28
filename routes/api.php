@@ -100,6 +100,11 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             'getDetailsAnswerByFacultyFirstOption',
             'App\Http\Controllers\Answers\AnswersController@getDetailsAnswerByFacultyFirstOption'
         );
+
+        Route::post(
+            'getAdmittedOrUnAdmittedPeople',
+            'App\Http\Controllers\Presentation\PresentationController@getAdmittedOrUnAdmittedPeople'
+        );
     });
 
     Route::group(['prefix' => 'semester'], function () {

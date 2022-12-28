@@ -35,7 +35,7 @@ class AnswersAO
             ->join('program as prf', 'prf.id', 'p.id_first_option_program')
             ->join('faculty as ff', 'ff.id', 'prf.id_faculty')
             ->leftJoin('program as prs', 'prs.id', 'p.id_second_option_program')
-            ->leftjoin('faculty as fs', 'fs.id', 'prs.id_faculty')
+            ->leftJoin('faculty as fs', 'fs.id', 'prs.id_faculty')
             ->join('municipality as m', 'm.id', 'pi.id_residence_municipality')
             ->join('state as sta', 'sta.id', 'm.id_state')
             ->join('country as co', 'co.id', 'sta.id_country')
