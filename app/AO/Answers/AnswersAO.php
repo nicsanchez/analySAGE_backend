@@ -40,7 +40,12 @@ class AnswersAO
             ->join('state as sta', 'sta.id', 'm.id_state')
             ->join('country as co', 'co.id', 'sta.id_country')
             ->join('continent as c', 'c.id', 'co.id_continent')
+            ->join('registration_type as rt', 'rt.id', 'p.id_registration_type')
             ->join('school as sc', 'sc.id', 'pi.id_school')
+            ->join('municipality as ms', 'ms.id', 'sc.id_municipality')
+            ->join('state as stas', 'stas.id', 'ms.id_state')
+            ->join('country as cos', 'cos.id', 'stas.id_country')
+            ->join('continent as cs', 'cs.id', 'cos.id_continent')
             ->join('questions as q', function ($join) use ($filters) {
                 $join->on('q.id_semester', '=', 's.id')
                     ->where('q.day_session', '=', $filters['journey']);
@@ -94,6 +99,22 @@ class AnswersAO
             $query->where('m.id', $filters['municipality']);
         }
 
+        if ($filters['schoolContinent']) {
+            $query->where('cs.id', $filters['schoolContinent']);
+        }
+
+        if ($filters['schoolCountry']) {
+            $query->where('cos.id', $filters['schoolCountry']);
+        }
+
+        if ($filters['schoolState']) {
+            $query->where('stas.id', $filters['schoolState']);
+        }
+
+        if ($filters['schoolMunicipality']) {
+            $query->where('ms.id', $filters['schoolMunicipality']);
+        }
+
         if ($filters['schoolNaturalness']) {
             $query->where('sc.naturalness', $filters['schoolNaturalness']);
         }
@@ -102,8 +123,8 @@ class AnswersAO
             $query->where('sc.id', $filters['school']);
         }
 
-        if ($filters['questionNumber']) {
-            $query->where('q.number', $filters['questionNumber']);
+        if ($filters['property']) {
+            $query->where('q.number', $filters['property']);
         }
 
         $query->groupBy($orderBy);

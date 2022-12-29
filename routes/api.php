@@ -102,8 +102,38 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         );
 
         Route::post(
+            'getDetailsAnswerByRegistrationType',
+            'App\Http\Controllers\Answers\AnswersController@getDetailsAnswerByRegistrationType'
+        );
+
+        Route::post(
             'getAdmittedOrUnAdmittedPeople',
             'App\Http\Controllers\Presentation\PresentationController@getAdmittedOrUnAdmittedPeople'
+        );
+
+        Route::post(
+            'getDetailsAdmittedOrUnAdmittedPeopleByVersion',
+            'App\Http\Controllers\Presentation\PresentationController@getDetailsAdmittedOrUnAdmittedPeopleByVersion'
+        );
+
+        Route::post(
+            'getDetailsAdmittedOrUnAdmittedPeopleByState',
+            'App\Http\Controllers\Presentation\PresentationController@getDetailsAdmittedOrUnAdmittedPeopleByState'
+        );
+
+        Route::post(
+            'getDetailsAdmittedOrUnAdmittedPeopleByStratum',
+            'App\Http\Controllers\Presentation\PresentationController@getDetailsAdmittedOrUnAdmittedPeopleByStratum'
+        );
+
+        Route::post(
+            'getDetailsAdmittedOrUnAdmittedPeopleByProgram',
+            'App\Http\Controllers\Presentation\PresentationController@getDetailsAdmittedOrUnAdmittedPeopleByProgram'
+        );
+
+        Route::post(
+            'getDetailsAdmittedOrUnAdmittedPeopleByRegistrationType',
+            'App\Http\Controllers\Presentation\PresentationController@getDetailsAdmittedOrUnAdmittedPeopleByRegistrationType'
         );
     });
 
@@ -177,8 +207,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         );
 
         Route::post(
-            'getAllSchoolsByNaturalnessAndMunicipality',
-            'App\Http\Controllers\School\SchoolController@getAllSchoolsByNaturalnessAndMunicipality'
+            'getAllSchoolsByNaturalnessAndLocation',
+            'App\Http\Controllers\School\SchoolController@getAllSchoolsByNaturalnessAndLocation'
         );
     });
 

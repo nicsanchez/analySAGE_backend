@@ -43,14 +43,33 @@ class SchoolAO
             ->get();
     }
 
-    public static function getAllSchoolsByNaturalnessAndMunicipality($naturalness, $idMunicipality)
+    public static function getAllSchoolsByNaturalnessAndLocation($filters)
     {
-        $query = DB::table('school')
-            ->select('id', 'name')
-            ->where('id_municipality', $idMunicipality);
+        $query = DB::table('school as sc')
+            ->join('municipality as m', 'm.id', 'sc.id_municipality')
+            ->join('state as sta', 'sta.id', 'm.id_state')
+            ->join('country as co', 'co.id', 'sta.id_country')
+            ->join('continent as c', 'c.id', 'co.id_continent')
+            ->select('sc.id', 'sc.name');
 
-        if ($naturalness) {
-            $query->where('naturalness', $naturalness);
+        if ($filters['naturalness']) {
+            $query->where('naturalness', $filters['naturalness']);
+        }
+
+        if ($filters['idContinent']) {
+            $query->where('c.id', $filters['idContinent']);
+        }
+
+        if ($filters['idCountry']) {
+            $query->where('co.id', $filters['idCountry']);
+        }
+
+        if ($filters['idState']) {
+            $query->where('sta.id', $filters['idState']);
+        }
+
+        if ($filters['idMunicipality']) {
+            $query->where('m.id', $filters['idMunicipality']);
         }
 
         return $query->get();

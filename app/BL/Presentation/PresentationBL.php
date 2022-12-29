@@ -27,4 +27,21 @@ class PresentationBL
         }
         return $response;
     }
+
+    public static function getDetailsAdmittedOrUnAdmittedPeople($request, $orderBy)
+    {
+        $response['status'] = 400;
+        try {
+            if (!$request['semester']) {
+                $request['semester'] = SemesterAO::getMaxSemesterId();
+            }
+            $response['data'] = PresentationAO::getAdmittedOrUnAdmittedPeople($request, $request['type'], $orderBy);
+            $response['status'] = 200;
+        } catch (\Throwable $th) {
+            $response['msg'] = "No fue posible obtener el detalle de estadisticas por estado de admisión.";
+            Log::error('No fue posible obtener el detalle de estadisticas por estado de admisión. | E: ' .
+                $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+        }
+        return $response;
+    }
 }

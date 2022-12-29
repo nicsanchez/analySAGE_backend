@@ -42,11 +42,11 @@ class SchoolBL
         return $response;
     }
 
-    public static function getAllSchoolsByNaturalnessAndMunicipality($naturalness, $idMunicipality)
+    public static function getAllSchoolsByNaturalnessAndLocation($request)
     {
         $response['status'] = 400;
         try {
-            $response['data'] = SchoolAO::getAllSchoolsByNaturalnessAndMunicipality($naturalness, $idMunicipality);
+            $response['data'] = SchoolAO::getAllSchoolsByNaturalnessAndLocation($request);
             $response['status'] = 200;
         } catch (\Throwable $th) {
             $response['msg'] = "No fue posible obtener los colegios del sistema.";

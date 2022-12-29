@@ -19,11 +19,8 @@ class SchoolController extends Controller
         return SchoolBL::getAllNaturalness();
     }
 
-    public function getAllSchoolsByNaturalnessAndMunicipality(Request $request)
+    public function getAllSchoolsByNaturalnessAndLocation(Request $request)
     {
-        return SchoolBL::getAllSchoolsByNaturalnessAndMunicipality(
-            $request->schoolNaturalness,
-            $request->idMunicipality
-        );
+        return SchoolBL::getAllSchoolsByNaturalnessAndLocation($request);
     }
 }

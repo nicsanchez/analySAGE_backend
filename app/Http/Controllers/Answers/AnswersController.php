@@ -38,4 +38,14 @@ class AnswersController extends Controller
     {
         return AnswersBL::getDetailsAnswers($request, 'ff.name');
     }
+
+    public function getDetailsAnswerByRegistrationType(Request $request)
+    {
+        return AnswersBL::getDetailsAnswers($request, 'rt.name');
+    }
+
+    public function getDetailsAnswerBySchool(Request $request)
+    {
+        return AnswersBL::getDetailsAnswers($request, 'sc.name');
+    }
 }

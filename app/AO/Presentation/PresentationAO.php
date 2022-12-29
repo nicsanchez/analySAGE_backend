@@ -64,6 +64,11 @@ class PresentationAO
             ->join('country as co', 'co.id', 'sta.id_country')
             ->join('continent as c', 'c.id', 'co.id_continent')
             ->join('school as sc', 'sc.id', 'pi.id_school')
+            ->join('municipality as ms', 'ms.id', 'sc.id_municipality')
+            ->join('state as stas', 'stas.id', 'ms.id_state')
+            ->join('country as cos', 'cos.id', 'stas.id_country')
+            ->join('continent as cs', 'cs.id', 'cos.id_continent')
+            ->join('registration_type as rt', 'rt.id', 'p.id_registration_type')
 
             ->select(
                 DB::raw('count(p.id) as count'),
@@ -123,6 +128,31 @@ class PresentationAO
 
         if ($filters['school']) {
             $query->where('sc.id', $filters['school']);
+        }
+
+
+        if ($filters['schoolContinent']) {
+            $query->where('cs.id', $filters['schoolContinent']);
+        }
+
+        if ($filters['schoolCountry']) {
+            $query->where('cos.id', $filters['schoolCountry']);
+        }
+
+        if ($filters['schoolState']) {
+            $query->where('stas.id', $filters['schoolState']);
+        }
+
+        if ($filters['schoolMunicipality']) {
+            $query->where('ms.id', $filters['schoolMunicipality']);
+        }
+
+        if ($filters['property']) {
+            if ($state == 1) {
+                $query->where('af.name', $filters['property']);
+            } else {
+                $query->where('ff.name', $filters['property']);
+            }
         }
 
         $query->groupBy($orderBy);
