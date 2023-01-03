@@ -28,6 +28,8 @@ class CreatePresentationTable extends Migration
             $table->boolean('admitted');
             $table->integer('version')->nullable();
             $table->integer('day_session')->nullable();
+            $table->decimal('rl_score', 8, 2)->nullable();
+            $table->decimal('lc_score', 8, 2)->nullable();
             $table->timestamps();
             $table->foreign('id_personal_information')->references('id')->on('personal_information');
             $table->foreign('id_first_option_program')->references('id')->on('program');

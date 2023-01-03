@@ -253,6 +253,8 @@ class InscribedBulkImport implements ToCollection
                 'admitted' => $row[22],
                 'id_acceptance_type' => $row[23],
                 'id_accepted_program' => $row[24],
+                'lc_score' => $row[25],
+                'rl_score' => $row[26],
             ];
 
             $data['validation'] = Validator::make(

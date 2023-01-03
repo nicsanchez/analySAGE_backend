@@ -43,4 +43,34 @@ class PresentationController extends Controller
     {
         return PresentationBL::getDetailsAdmittedOrUnAdmittedPeople($request, 'rt.name');
     }
+
+    public function getAverageExamComponent(Request $request)
+    {
+        return PresentationBL::getAverageExamComponent($request);
+    }
+
+    public function getDetailsAverageExamComponentByVersion(Request $request)
+    {
+        return PresentationBL::getDetailsAverageExamComponent($request, 'p.version');
+    }
+
+    public function getDetailsAverageExamComponentByState(Request $request)
+    {
+        return PresentationBL::getDetailsAverageExamComponent($request, 'sta.name');
+    }
+
+    public function getDetailsAverageExamComponentByStratum(Request $request)
+    {
+        return PresentationBL::getDetailsAverageExamComponent($request, 'st.number');
+    }
+
+    public function getDetailsAverageExamComponentByProgram(Request $request)
+    {
+        return PresentationBL::getDetailsAverageExamComponent($request, 'prf.name');
+    }
+
+    public function getDetailsAverageExamComponentByRegistrationType(Request $request)
+    {
+        return PresentationBL::getDetailsAverageExamComponent($request, 'rt.name');
+    }
 }

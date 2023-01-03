@@ -44,4 +44,45 @@ class PresentationBL
         }
         return $response;
     }
+
+    public static function getAverageExamComponent($request)
+    {
+        $response['status'] = 400;
+        try {
+            if (!$request['semester']) {
+                $request['semester'] = SemesterAO::getMaxSemesterId();
+            }
+            $response['right'] = PresentationAO::getAverageExamComponent($request, 'p.lc_score', 'ff.name');
+            $response['bad'] = PresentationAO::getAverageExamComponent($request, 'p.rl_score', 'ff.name');
+            $response['status'] = 200;
+        } catch (\Throwable $th) {
+            $response['msg'] = "No fue posible obtener datos para el grafo de estadisticas por componente del examen.";
+            Log::error('No fue posible obtener datos para el grafo de estadisticas por componente del examen. | E: ' .
+                $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+        }
+        return $response;
+    }
+
+    public static function getDetailsAverageExamComponent($request, $orderBy)
+    {
+        $response['status'] = 400;
+        try {
+            if (!$request['semester']) {
+                $request['semester'] = SemesterAO::getMaxSemesterId();
+            }
+
+            if ($request['type'] == 1) {
+                $response['data'] = PresentationAO::getAverageExamComponent($request, 'p.rl_score', $orderBy);
+            } else {
+                $response['data'] = PresentationAO::getAverageExamComponent($request, 'p.lc_score', $orderBy);
+            }
+
+            $response['status'] = 200;
+        } catch (\Throwable $th) {
+            $response['msg'] = "No fue posible obtener el detalle de estadisticas por componente del examen.";
+            Log::error('No fue posible obtener el detalle de estadisticas por componente del examen. | E: ' .
+                $th->getMessage() . ' | L: ' . $th->getLine() . ' | F:' . $th->getFile());
+        }
+        return $response;
+    }
 }

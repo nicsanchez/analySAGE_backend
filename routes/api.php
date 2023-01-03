@@ -135,6 +135,36 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             'getDetailsAdmittedOrUnAdmittedPeopleByRegistrationType',
             'App\Http\Controllers\Presentation\PresentationController@getDetailsAdmittedOrUnAdmittedPeopleByRegistrationType'
         );
+
+        Route::post(
+            'getAverageExamComponent',
+            'App\Http\Controllers\Presentation\PresentationController@getAverageExamComponent'
+        );
+
+        Route::post(
+            'getDetailsAverageExamComponentByVersion',
+            'App\Http\Controllers\Presentation\PresentationController@getDetailsAverageExamComponentByVersion'
+        );
+
+        Route::post(
+            'getDetailsAverageExamComponentByState',
+            'App\Http\Controllers\Presentation\PresentationController@getDetailsAverageExamComponentByState'
+        );
+
+        Route::post(
+            'getDetailsAverageExamComponentByStratum',
+            'App\Http\Controllers\Presentation\PresentationController@getDetailsAverageExamComponentByStratum'
+        );
+
+        Route::post(
+            'getDetailsAverageExamComponentByProgram',
+            'App\Http\Controllers\Presentation\PresentationController@getDetailsAverageExamComponentByProgram'
+        );
+
+        Route::post(
+            'getDetailsAverageExamComponentByRegistrationType',
+            'App\Http\Controllers\Presentation\PresentationController@getDetailsAverageExamComponentByRegistrationType'
+        );
     });
 
     Route::group(['prefix' => 'semester'], function () {
