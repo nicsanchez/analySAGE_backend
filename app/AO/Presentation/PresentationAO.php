@@ -47,33 +47,13 @@ class PresentationAO
 
     public static function getAdmittedOrUnAdmittedPeople($filters, $state, $orderBy)
     {
-        $query = DB::table('presentation as p')
-            ->join('answers as a', 'a.id_presentation', 'p.id')
-            ->join('semester as s', 's.id', 'p.id_semester')
-            ->join('personal_information as pi', 'pi.id', 'p.id_personal_information')
-            ->join('stratum as st', 'st.id', 'pi.id_stratum')
-            ->join('gender as g', 'g.id', 'pi.id_gender')
-            ->join('program as prf', 'prf.id', 'p.id_first_option_program')
-            ->join('faculty as ff', 'ff.id', 'prf.id_faculty')
-            ->leftJoin('program as prs', 'prs.id', 'p.id_second_option_program')
-            ->leftjoin('faculty as fs', 'fs.id', 'prs.id_faculty')
-            ->leftJoin('program as pra', 'pra.id', 'p.id_accepted_program')
-            ->leftJoin('faculty as af', 'af.id', 'pra.id_faculty')
-            ->join('municipality as m', 'm.id', 'pi.id_residence_municipality')
-            ->join('state as sta', 'sta.id', 'm.id_state')
-            ->join('country as co', 'co.id', 'sta.id_country')
-            ->join('continent as c', 'c.id', 'co.id_continent')
-            ->join('school as sc', 'sc.id', 'pi.id_school')
-            ->join('municipality as ms', 'ms.id', 'sc.id_municipality')
-            ->join('state as stas', 'stas.id', 'ms.id_state')
-            ->join('country as cos', 'cos.id', 'stas.id_country')
-            ->join('continent as cs', 'cs.id', 'cos.id_continent')
-            ->join('registration_type as rt', 'rt.id', 'p.id_registration_type')
-
-            ->select(
-                DB::raw('count(p.id) as count'),
-                $orderBy.' as parameter'
-            );
+        dd(array_keys($filters->all()));
+        $query = self::getCommonRelationShipsByStatisticsQuery();
+        $query->join('answers as a', 'a.id_presentation', 'p.id');
+        $query->select(
+            DB::raw('count(p.id) as count'),
+            $orderBy.' as parameter'
+        );
 
         $query->where('s.id', $filters['semester']);
         $query->where('p.admitted', $state);
@@ -162,32 +142,12 @@ class PresentationAO
 
     public static function getAverageExamComponent($filters, $selectAverage, $orderBy)
     {
-        $query = DB::table('presentation as p')
-            ->join('semester as s', 's.id', 'p.id_semester')
-            ->join('personal_information as pi', 'pi.id', 'p.id_personal_information')
-            ->join('stratum as st', 'st.id', 'pi.id_stratum')
-            ->join('gender as g', 'g.id', 'pi.id_gender')
-            ->join('program as prf', 'prf.id', 'p.id_first_option_program')
-            ->join('faculty as ff', 'ff.id', 'prf.id_faculty')
-            ->leftJoin('program as prs', 'prs.id', 'p.id_second_option_program')
-            ->leftjoin('faculty as fs', 'fs.id', 'prs.id_faculty')
-            ->leftJoin('program as pra', 'pra.id', 'p.id_accepted_program')
-            ->leftJoin('faculty as af', 'af.id', 'pra.id_faculty')
-            ->join('municipality as m', 'm.id', 'pi.id_residence_municipality')
-            ->join('state as sta', 'sta.id', 'm.id_state')
-            ->join('country as co', 'co.id', 'sta.id_country')
-            ->join('continent as c', 'c.id', 'co.id_continent')
-            ->join('school as sc', 'sc.id', 'pi.id_school')
-            ->join('municipality as ms', 'ms.id', 'sc.id_municipality')
-            ->join('state as stas', 'stas.id', 'ms.id_state')
-            ->join('country as cos', 'cos.id', 'stas.id_country')
-            ->join('continent as cs', 'cs.id', 'cos.id_continent')
-            ->join('registration_type as rt', 'rt.id', 'p.id_registration_type')
+        $query = self::getCommonRelationShipsByStatisticsQuery();
 
-            ->select(
-                DB::raw('round(avg('.$selectAverage.'),2) as count'),
-                $orderBy.' as parameter'
-            );
+        $query->select(
+            DB::raw('round(avg('.$selectAverage.'),2) as count'),
+            $orderBy.' as parameter'
+        );
 
         $query->where('s.id', $filters['semester']);
         $query->whereNotNull($selectAverage);
@@ -268,5 +228,30 @@ class PresentationAO
         $query->orderBy($orderBy, 'ASC');
 
         return $query->get()->toArray();
+    }
+
+    public static function getCommonRelationShipsByStatisticsQuery()
+    {
+        return DB::table('presentation as p')
+            ->join('semester as s', 's.id', 'p.id_semester')
+            ->join('personal_information as pi', 'pi.id', 'p.id_personal_information')
+            ->join('stratum as st', 'st.id', 'pi.id_stratum')
+            ->join('gender as g', 'g.id', 'pi.id_gender')
+            ->join('program as prf', 'prf.id', 'p.id_first_option_program')
+            ->join('faculty as ff', 'ff.id', 'prf.id_faculty')
+            ->leftJoin('program as prs', 'prs.id', 'p.id_second_option_program')
+            ->leftjoin('faculty as fs', 'fs.id', 'prs.id_faculty')
+            ->leftJoin('program as pra', 'pra.id', 'p.id_accepted_program')
+            ->leftJoin('faculty as af', 'af.id', 'pra.id_faculty')
+            ->join('municipality as m', 'm.id', 'pi.id_residence_municipality')
+            ->join('state as sta', 'sta.id', 'm.id_state')
+            ->join('country as co', 'co.id', 'sta.id_country')
+            ->join('continent as c', 'c.id', 'co.id_continent')
+            ->join('school as sc', 'sc.id', 'pi.id_school')
+            ->join('municipality as ms', 'ms.id', 'sc.id_municipality')
+            ->join('state as stas', 'stas.id', 'ms.id_state')
+            ->join('country as cos', 'cos.id', 'stas.id_country')
+            ->join('continent as cs', 'cs.id', 'cos.id_continent')
+            ->join('registration_type as rt', 'rt.id', 'p.id_registration_type');
     }
 }

@@ -44,8 +44,4 @@ class AnswersController extends Controller
         return AnswersBL::getDetailsAnswers($request, 'rt.name');
     }
 
-    public function getDetailsAnswerBySchool(Request $request)
-    {
-        return AnswersBL::getDetailsAnswers($request, 'sc.name');
-    }
 }
