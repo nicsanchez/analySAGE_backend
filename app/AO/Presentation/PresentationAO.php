@@ -6,6 +6,26 @@ use DB;
 
 class PresentationAO
 {
+    public static $data = [
+        'gender' => 'g.id',
+        'journey' => 'p.day_session',
+        'stratum' => 'st.id',
+        'firstOptionProgram' => 'prf.id',
+        'secondOptionProgram' => 'prs.id',
+        'firstOptionFaculty' => 'ff.id',
+        'secondOptionFaculty' => 'fs.id',
+        'continent' => 'c.id',
+        'country' => 'co.id',
+        'state' => 'sta.id',
+        'municipality' => 'm.id',
+        'schoolNaturalness' => 'sc.naturalness',
+        'school' => 'sc.id',
+        'schoolContinent' => 'cs.id',
+        'schoolCountry' => 'cos.id',
+        'schoolState' => 'stas.id',
+        'schoolMunicipality' => 'ms.id',
+        'semester' => 's.id'
+    ];
 
     public static function getPresentationBySemesterAndPersonalInfo($semester, $personalInfoId)
     {
@@ -45,9 +65,11 @@ class PresentationAO
         return ($presentations->count() > 0);
     }
 
-    public static function getAdmittedOrUnAdmittedPeople($filters, $state, $orderBy)
+    public static function getAdmittedOrUnAdmittedPeople($request, $state, $orderBy)
     {
-        dd(array_keys($filters->all()));
+        $filters = $request->all();
+        $filterKeys = array_keys($filters);
+
         $query = self::getCommonRelationShipsByStatisticsQuery();
         $query->join('answers as a', 'a.id_presentation', 'p.id');
         $query->select(
@@ -55,82 +77,19 @@ class PresentationAO
             $orderBy.' as parameter'
         );
 
-        $query->where('s.id', $filters['semester']);
         $query->where('p.admitted', $state);
 
-        if ($filters['gender']) {
-            $query->where('g.id', $filters['gender']);
+        foreach ($filterKeys as $key) {
+            if ($filters[$key] && array_key_exists($key, self::$data)) {
+                $query->where(self::$data[$key], $filters[$key]);
+            }
         }
 
-        if ($filters['journey']) {
-            $query->where('p.day_session', $filters['journey']);
-        }
-
-        if ($filters['stratum']) {
-            $query->where('st.id', $filters['stratum']);
-        }
-
-        if ($filters['firstOptionProgram']) {
-            $query->where('prf.id', $filters['firstOptionProgram']);
-        }
-
-        if ($filters['secondOptionProgram']) {
-            $query->where('prs.id', $filters['secondOptionProgram']);
-        }
-
-        if ($filters['firstOptionFaculty']) {
-            $query->where('ff.id', $filters['firstOptionFaculty']);
-        }
-
-        if ($filters['secondOptionFaculty']) {
-            $query->where('fs.id', $filters['secondOptionFaculty']);
-        }
-
-        if ($filters['continent']) {
-            $query->where('c.id', $filters['continent']);
-        }
-
-        if ($filters['country']) {
-            $query->where('co.id', $filters['country']);
-        }
-
-        if ($filters['state']) {
-            $query->where('sta.id', $filters['state']);
-        }
-
-        if ($filters['municipality']) {
-            $query->where('m.id', $filters['municipality']);
-        }
-
-        if ($filters['schoolNaturalness']) {
-            $query->where('sc.naturalness', $filters['schoolNaturalness']);
-        }
-
-        if ($filters['school']) {
-            $query->where('sc.id', $filters['school']);
-        }
-
-        if ($filters['schoolContinent']) {
-            $query->where('cs.id', $filters['schoolContinent']);
-        }
-
-        if ($filters['schoolCountry']) {
-            $query->where('cos.id', $filters['schoolCountry']);
-        }
-
-        if ($filters['schoolState']) {
-            $query->where('stas.id', $filters['schoolState']);
-        }
-
-        if ($filters['schoolMunicipality']) {
-            $query->where('ms.id', $filters['schoolMunicipality']);
-        }
-
-        if ($filters['property']) {
+        if ($request['property']) {
             if ($state == 1) {
-                $query->where('af.name', $filters['property']);
+                $query->where('af.name', $request['property']);
             } else {
-                $query->where('ff.name', $filters['property']);
+                $query->where('ff.name', $request['property']);
             }
         }
 
@@ -140,88 +99,27 @@ class PresentationAO
         return $query->get()->toArray();
     }
 
-    public static function getAverageExamComponent($filters, $selectAverage, $orderBy)
+    public static function getAverageExamComponent($request, $selectAverage, $orderBy)
     {
-        $query = self::getCommonRelationShipsByStatisticsQuery();
+        $filters = $request->all();
+        $filterKeys = array_keys($filters);
 
+        $query = self::getCommonRelationShipsByStatisticsQuery();
         $query->select(
             DB::raw('round(avg('.$selectAverage.'),2) as count'),
             $orderBy.' as parameter'
         );
 
-        $query->where('s.id', $filters['semester']);
         $query->whereNotNull($selectAverage);
 
-        if ($filters['gender']) {
-            $query->where('g.id', $filters['gender']);
+        foreach ($filterKeys as $key) {
+            if ($filters[$key] && array_key_exists($key, self::$data)) {
+                $query->where(self::$data[$key], $filters[$key]);
+            }
         }
 
-        if ($filters['journey']) {
-            $query->where('p.day_session', $filters['journey']);
-        }
-
-        if ($filters['stratum']) {
-            $query->where('st.id', $filters['stratum']);
-        }
-
-        if ($filters['firstOptionProgram']) {
-            $query->where('prf.id', $filters['firstOptionProgram']);
-        }
-
-        if ($filters['secondOptionProgram']) {
-            $query->where('prs.id', $filters['secondOptionProgram']);
-        }
-
-        if ($filters['firstOptionFaculty']) {
-            $query->where('ff.id', $filters['firstOptionFaculty']);
-        }
-
-        if ($filters['secondOptionFaculty']) {
-            $query->where('fs.id', $filters['secondOptionFaculty']);
-        }
-
-        if ($filters['continent']) {
-            $query->where('c.id', $filters['continent']);
-        }
-
-        if ($filters['country']) {
-            $query->where('co.id', $filters['country']);
-        }
-
-        if ($filters['state']) {
-            $query->where('sta.id', $filters['state']);
-        }
-
-        if ($filters['municipality']) {
-            $query->where('m.id', $filters['municipality']);
-        }
-
-        if ($filters['schoolNaturalness']) {
-            $query->where('sc.naturalness', $filters['schoolNaturalness']);
-        }
-
-        if ($filters['school']) {
-            $query->where('sc.id', $filters['school']);
-        }
-
-        if ($filters['schoolContinent']) {
-            $query->where('cs.id', $filters['schoolContinent']);
-        }
-
-        if ($filters['schoolCountry']) {
-            $query->where('cos.id', $filters['schoolCountry']);
-        }
-
-        if ($filters['schoolState']) {
-            $query->where('stas.id', $filters['schoolState']);
-        }
-
-        if ($filters['schoolMunicipality']) {
-            $query->where('ms.id', $filters['schoolMunicipality']);
-        }
-
-        if ($filters['property']) {
-            $query->where('ff.name', $filters['property']);
+        if ($request['property']) {
+            $query->where('ff.name', $request['property']);
         }
 
         $query->groupBy($orderBy);
