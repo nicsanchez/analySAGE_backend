@@ -107,7 +107,8 @@ class StoreInscribed extends FormRequest
             'admitted'.$this->string => 'Admitido debe ser de tipo texto',
             'id_acceptance_type'.$this->string => 'Tipo de Aceptación debe ser de tipo texto',
             'id_accepted_program'.$this->integer => 'Id Programa Admitido debe ser de tipo entero',
-
+            'lc_score' => $this->nullable.'|between:0,100.00',
+            'rl_score' => $this->nullable.'|between:0,100.00',
         ];
     }
 
